@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>オリジナルゲームポータル</title>
+  
+  <!-- Google Analytics 4 (GA4) -->
+  <!-- ※ G-XXXXXXXXXX をご自身の測定IDに変更してください -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX', { 'send_page_view': false }); // カスタムイベントで制御するため自動PVはOFF
+  </script>
+
+  <style>
+    /* ベーススタイル（高級感・清潔感のあるモダンデザイン） */
+    :root {
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --primary-color: #1e293b;
+      --accent-color: #2563eb;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px; /* スマホ表示に最適化 */
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-top: 12px;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      letter-spacing: 0.05em;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      color: var(--text-sub);
+      margin-top: 6px;
+    }
+
+    /* セクション切り替え */
+    .hidden {
+      display: none !important;
+    }
+
+    /* カードスタイル */
+    .card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    /* フォームスタイル */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary-color);
+    }
+
+    .radio-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: normal;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .radio-group input[type="radio"] {
+      display: none;
+    }
+
+    .radio-group input[type="radio"]:checked + span {
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .radio-group label:has(input[type="radio"]:checked) {
+      border-color: var(--accent-color);
+      background-color: #eff6ff;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:active {
+      opacity: 0.9;
+    }
+
+    /* ゲーム一覧（トップ画面）スタイル */
+    .game-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .game-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game-card:active {
+      transform: scale(0.97);
+    }
+
+    .game-thumbnail {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      background-color: #e2e8f0;
+    }
+
+    .game-info {
+      padding: 10px;
+      text-align: center;
+    }
+
+    .game-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Table Top Games</h1>
+      <p>お料理を待つ間、自由にお楽しみください</p>
+    </header>
+
+    <!-- ① アンケート画面 -->
+    <section id="survey-section" class="card">
+      <form id="survey-form">
+        <!-- 性別 -->
+        <div class="form-group">
+          <label>性別</label>
+          <div class="radio-group">
+            <label><input type="radio" name="gender" value="男性" required><span>男性</span></label>
+            <label><input type="radio" name="gender" value="女性"><span>女性</span></label>
+            <label><input type="radio" name="gender" value="無回答"><span>無回答</span></label>
+          </div>
+        </div>
+
+        <!-- 年代 -->
+        <div class="form-group">
+          <label>年代</label>
+          <div class="radio-group">
+            <label><input type="radio" name="age" value="35歳未満" required><span>35歳未満</span></label>
+            <label><input type="radio" name="age" value="35歳以上"><span>35歳以上</span></label>
+          </div>
+        </div>
+
+        <!-- 関係性 -->
+        <div class="form-group">
+          <label>ご来店のご関係</label>
+          <div class="radio-group" style="grid-template-columns: 1fr 1fr;">
+            <label><input type="radio" name="relationship" value="1人" required><span>1人</span></label>
+            <label><input type="radio" name="relationship" value="友人・知人"><span>友人・知人</span></label>
+            <label><input type="radio" name="relationship" value="仕事関係"><span>仕事関係</span></label>
+            <label><input type="radio" name="relationship" value="家族・親族"><span>家族・親族</span></label>
+            <label style="grid-column: span 2;"><input type="radio" name="relationship" value="無回答"><span>無回答</span></label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit">ゲーム一覧へ</button>
+      </form>
+    </section>
+
+    <!-- ② トップ画面（ゲーム一覧） -->
+    <section id="top-section" class="hidden">
+      <div class="game-grid">
+        <!-- ゲーム 1 -->
+        <a class="game-card" data-title="スピードパズル" href="https://example.com/game1">
+          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=300&auto=format&fit=crop&q=60" alt="ゲーム1">
+          <div class="game-info">
+            <div class="game-title">スピードパズル</div>
+          </div>
+        </a>
+
+        <!-- ゲーム 2 -->
+        <a class="game-card" data-title="テーブルリバーシ" href="https://example.com/game2">
+          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=300&auto=format&fit=crop&q=60" alt="ゲーム2">
+          <div class="game-info">
+            <div class="game-title">テーブルリバーシ</div>
+          </div>
+        </a>
+
+        <!-- ゲーム 3 -->
+        <a class="game-card" data-title="デイリーソリティア" href="https://example.com/game3">
+          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1606168094336-48f205276929?w=300&auto=format&fit=crop&q=60" alt="ゲーム3">
+          <div class="game-info">
+            <div class="game-title">デイリーソリティア</div>
+          </div>
+        </a>
+
+        <!-- ゲーム 4 -->
+        <a class="game-card" data-title="ブロッククラッシュ" href="https://example.com/game4">
+          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&auto=format&fit=crop&q=60" alt="ゲーム4">
+          <div class="game-info">
+            <div class="game-title">ブロッククラッシュ</div>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
