@@ -1,16 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // ★ここにGASでデプロイした「ウェブアプリのURL」を貼り付けてください
+  const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxw21MDXDHN-NZQGUjCdYNZGqJNWUCh-AwNPZYfq3HaIxDle2QaXB8cRoM8SdjHjpkl/exec';
+
   const surveySection = document.getElementById('survey-section');
   const topSection = document.getElementById('top-section');
   const surveyForm = document.getElementById('survey-form');
   const gameCards = document.querySelectorAll('.game-card');
 
-  // ローカルストレージキー
   const STORAGE_KEY = 'restaurant_game_user_profile';
-
-  // 保存されているプロファイル（属性）を取得
   const savedProfile = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
-  // =========================================================
+  // --- スプレッドシート（GAS）へ非同期で送信する共通関数 ---
+  function sendToSheet(payload) {
+    // 画面の動きを邪魔しないようバックグラウンドで送信
+    fetch(GAS_WEB_APP_URL, {
+      method: 'POST',
+      mode: 'no-cors', // クロスドメインエラー回避
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).catch(err => console.error('GAS Send Error:', err));
+  }
+
+// =========================================================
   // 【動作確認・テスト時の切り替えエリア】
   // =========================================================
   if (savedProfile) {
@@ -20,18 +31,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // ■ テスト用: 毎回アンケートを表示したい時は、上の「showTopSection...」の頭に
     //   「//」をつけてコメントアウトしてください。
   } else {
-    // 初回アクセス時：アンケート表示ログを送信（未回答離脱の計算用）
-    gtag('event', 'survey_view', {
-      event_category: 'Engagement'
-    });
+    // 初回アクセス時：アンケート表示ログをスプレッドシートに送信
+    sendToSheet({ event: 'survey_view' });
   }
-  // =========================================================
+  // ========================================================
 
-  // --- アンケート送信処理 ---
+// --- アンケート送信処理 ---
   surveyForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    // 入力データの取得
     const formData = new FormData(surveyForm);
     const userProfile = {
       gender: formData.get('gender'),
@@ -40,17 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
       answeredAt: new Date().toISOString()
     };
 
-    // localStorageに回答内容を保存
     localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile));
 
-    // GA4にアンケート完了イベントを送信
-    gtag('event', 'survey_submit', {
+    // スプレッドシートにアンケート回答ログを送信
+    sendToSheet({
+      event: 'survey_submit',
       gender: userProfile.gender,
       age: userProfile.age,
       relationship: userProfile.relationship
     });
 
-    // トップ画面の表示へ切り替え
     showTopSection(userProfile, false);
   });
 
@@ -59,8 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
     surveySection.classList.add('hidden');
     topSection.classList.remove('hidden');
 
-    // トップ画面表示ログをGA4に送信（ゲーム未プレイ離脱の計算用）
-    gtag('event', 'top_view', {
+    // スプレッドシートにトップ画面表示ログを送信（ゲーム未プレイ離脱の計算用）
+    sendToSheet({
+      event: 'top_view',
       gender: profile.gender,
       age: profile.age,
       relationship: profile.relationship,
@@ -77,23 +85,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetUrl = card.getAttribute('href');
       const profile = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 
-      // GA4にゲームプレイ開始ログを送信
-      gtag('event', 'game_play', {
+      // スプレッドシートにゲームタップログを送信
+      sendToSheet({
+        event: 'game_play',
         game_name: gameTitle,
-        game_url: targetUrl,
-        gender: profile.gender || 'unknown',
-        age: profile.age || 'unknown',
-        relationship: profile.relationship || 'unknown',
-        // イベント送信後にページ遷移させるためcallbackを指定
-        event_callback: () => {
-          window.location.href = targetUrl;
-        }
+        gender: profile.gender || '',
+        age: profile.age || '',
+        relationship: profile.relationship || ''
       });
 
-      // 万が一GA4の通信が遅延した場合のセーフティ（300ms後に強制遷移）
+      // ログ送信と同時にスムーズにゲーム画面へ遷移させる
       setTimeout(() => {
         window.location.href = targetUrl;
-      }, 300);
+      }, 150);
     });
   });
 });
