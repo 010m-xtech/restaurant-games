@@ -4,16 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>オリジナルゲームポータル</title>
-  
-  <!-- Google Analytics 4 (GA4) -->
-  <!-- ※ G-XXXXXXXXXX をご自身の測定IDに変更してください -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX', { 'send_page_view': false }); // カスタムイベントで制御するため自動PVはOFF
-  </script>
 
   <style>
     /* ベーススタイル（高級感・清潔感のあるモダンデザイン） */
@@ -152,7 +142,7 @@
     .game-grid {
       display: grid;
       grid-template-columns: 1fr 1fr; /* 2列並び */
-      gap: 12px; /* 画像間の隙間を少し狭く調整 */
+      gap: 12px;
     }
 
     .game-card {
@@ -169,26 +159,18 @@
       flex-direction: column;
     }
 
-    /* タップ時のエフェクト */
     .game-card:active {
       transform: scale(0.98);
       box-shadow: 0 1px 4px rgba(0,0,0,0.02);
     }
 
-    /* 【画像サイズ自動調整の肝】 */
     .game-thumbnail {
-      width: 100%;         /* 親要素（.game-card）の幅一杯に広げる */
-      height: auto;        /* 高さは幅に合わせて自動調整 */
-      
-      /* 元画像の縦横比 (572x1024) を強制的に維持する */
-      aspect-ratio: 572 / 1024; 
-      
-      /* 万が一画像がはみ出したり歪んだりした時の保険 */
-      object-fit: cover;   
-      
-      display: block;      /* 下部に謎の隙間ができるのを防ぐ */
+      width: 100%;
+      height: auto;
+      aspect-ratio: 572 / 1024; /* 572x1024の縦横比を正確に維持 */
+      object-fit: cover;
+      display: block;
     }
-
   </style>
 </head>
 <body>
@@ -242,10 +224,8 @@
       <div class="game-grid">
         
         <!-- ゲーム 1 -->
-        <!-- ※data-titleは集計に使われるので、画像に書いてあるゲーム名を入れてください -->
         <a class="game-card" data-title="ルーレット" href="https://example.com/game1"target="_blank" rel="noopener noreferrer">
           <img class="game-thumbnail" src="images/game1.webp" alt="ルーレット">
-          <!-- ゲーム名テキストエリア（div.game-info）を削除しました -->
         </a>
 
         <!-- ゲーム 2 -->
@@ -263,13 +243,9 @@
           <img class="game-thumbnail" src="images/game4.webp" alt="占い">
         </a>
         
-      </div>
+</div>
     </section>
   </div>
-
-  <script src="script.js"></script>
-</body>
-</html>
 
   <script src="script.js"></script>
 </body>
