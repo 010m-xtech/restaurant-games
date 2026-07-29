@@ -10,15 +10,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // 保存されているプロファイル（属性）を取得
   const savedProfile = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
+  // =========================================================
+  // 【動作確認・テスト時の切り替えエリア】
+  // =========================================================
   if (savedProfile) {
-    // 【パターンA】回答済みの場合：アンケートを非表示にしてトップ画面を表示
+    // ■ 本番用: 2回目以降はアンケートをスキップしてトップ画面へ
     showTopSection(savedProfile, true);
+
+    // ■ テスト用: 毎回アンケートを表示したい時は、上の「showTopSection...」の頭に
+    //   「//」をつけてコメントアウトしてください。
   } else {
-    // 【パターンB】初回アクセスの場合：アンケートを表示し、表示ログを記録（未回答離脱の計算用）
+    // 初回アクセス時：アンケート表示ログを送信（未回答離脱の計算用）
     gtag('event', 'survey_view', {
       event_category: 'Engagement'
     });
   }
+  // =========================================================
 
   // --- アンケート送信処理 ---
   surveyForm.addEventListener('submit', (e) => {
@@ -77,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gender: profile.gender || 'unknown',
         age: profile.age || 'unknown',
         relationship: profile.relationship || 'unknown',
-        // イベント送信後にページ遷移させるため、callbackを指定
+        // イベント送信後にページ遷移させるためcallbackを指定
         event_callback: () => {
           window.location.href = targetUrl;
         }
