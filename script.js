@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // ★ここにGASのウェブアプリURLを貼り付けてください
-  const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxw21MDXDHN-NZQGUjCdYNZGqJNWUCh-AwNPZYfq3HaIxDle2QaXB8cRoM8SdjHjpkl/exec';
+  const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby-QMhndXONUWbP1eEN9v9d7iJJcCAnOESGe7NMwzb2X2NsVX__P7mKx7ZihA7YA1Vk/exec';
 
   const surveySection = document.getElementById('survey-section');
   const topSection = document.getElementById('top-section');
@@ -20,12 +20,28 @@ document.addEventListener('DOMContentLoaded', () => {
     return deviceId;
   }
 
+  // --- URLパラメータから店舗名を取得する関数 ---
+  function getStoreId() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const storeParam = urlParams.get('store');
+
+    if (storeParam) {
+      // URLに店舗指定があれば保存＆利用
+      localStorage.setItem('restaurant_game_store_id', storeParam);
+      return storeParam;
+    }
+    // URLにない場合は保存されている過去の店舗名を使う（未指定の場合は 'unknown'）
+    return localStorage.getItem('restaurant_game_store_id') || 'unknown';
+  }
+
   const currentDeviceId = getDeviceId();
+  const currentStoreId = getStoreId();
   const savedProfile = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
   // --- スプレッドシート（GAS）へ非同期送信 ---
   function sendToSheet(payload) {
     payload.deviceId = currentDeviceId;
+    payload.storeId = currentStoreId; // 店舗IDを全送信データに自動付与
 
     fetch(GAS_WEB_APP_URL, {
       method: 'POST',
@@ -99,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const targetUrl = card.getAttribute('href');
       const profile = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 
-      // ゲームタップログ送信（デバイスID＋ゲーム名＋属性）
+      // ゲームタップログ送信
       sendToSheet({
         event: 'game_play',
         game_name: gameTitle,
