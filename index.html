@@ -73,8 +73,8 @@
       display: none !important;
     }
 
-    /* カードスタイル */
-    .card {
+    /* アンケートフォーム用カードスタイル */
+    #survey-section.card {
       background: var(--card-bg);
       border-radius: 16px;
       padding: 24px 20px;
@@ -151,8 +151,8 @@
     /* ゲーム一覧（トップ画面）スタイル */
     .game-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      grid-template-columns: 1fr 1fr; /* 2列並び */
+      gap: 12px; /* 画像間の隙間を少し狭く調整 */
     }
 
     .game-card {
@@ -162,34 +162,33 @@
       border: 1px solid var(--border-color);
       box-shadow: 0 2px 8px rgba(0,0,0,0.04);
       cursor: pointer;
-      transition: transform 0.15s ease;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
       text-decoration: none;
       color: inherit;
       display: flex;
       flex-direction: column;
     }
 
+    /* タップ時のエフェクト */
     .game-card:active {
-      transform: scale(0.97);
+      transform: scale(0.98);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
     }
 
+    /* 【画像サイズ自動調整の肝】 */
     .game-thumbnail {
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-      background-color: #e2e8f0;
+      width: 100%;         /* 親要素（.game-card）の幅一杯に広げる */
+      height: auto;        /* 高さは幅に合わせて自動調整 */
+      
+      /* 元画像の縦横比 (572x1024) を強制的に維持する */
+      aspect-ratio: 572 / 1024; 
+      
+      /* 万が一画像がはみ出したり歪んだりした時の保険 */
+      object-fit: cover;   
+      
+      display: block;      /* 下部に謎の隙間ができるのを防ぐ */
     }
 
-    .game-info {
-      padding: 10px;
-      text-align: center;
-    }
-
-    .game-title {
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: var(--primary-color);
-    }
   </style>
 </head>
 <body>
@@ -205,7 +204,7 @@
       <form id="survey-form">
         <!-- 性別 -->
         <div class="form-group">
-          <label>性別を教えてください</label>
+          <label>性別</label>
           <div class="radio-group">
             <label><input type="radio" name="gender" value="男性" required><span>男性</span></label>
             <label><input type="radio" name="gender" value="女性"><span>女性</span></label>
@@ -215,7 +214,7 @@
 
         <!-- 年代 -->
         <div class="form-group">
-          <label>年代を教えてください</label>
+          <label>年代</label>
           <div class="radio-group">
             <label><input type="radio" name="age" value="35歳未満" required><span>35歳未満</span></label>
             <label><input type="radio" name="age" value="35歳以上"><span>35歳以上</span></label>
@@ -224,7 +223,7 @@
 
         <!-- 関係性 -->
         <div class="form-group">
-          <label>どなたとご来店されましたか？</label>
+          <label>ご来店のご関係</label>
           <div class="radio-group" style="grid-template-columns: 1fr 1fr;">
             <label><input type="radio" name="relationship" value="1人" required><span>1人</span></label>
             <label><input type="radio" name="relationship" value="友人・知人"><span>友人・知人</span></label>
@@ -241,40 +240,36 @@
     <!-- ② トップ画面（ゲーム一覧） -->
     <section id="top-section" class="hidden">
       <div class="game-grid">
+        
         <!-- ゲーム 1 -->
-        <a class="game-card" data-title="ルーレット" href="https://example.com/game1">
-          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1611996575749-79a3a250f948?w=300&auto=format&fit=crop&q=60" alt="ゲーム1">
-          <div class="game-info">
-            <div class="game-title">ルーレット</div>
-          </div>
+        <!-- ※data-titleはGA4集計に使われるので、画像に書いてあるゲーム名を入れてください -->
+        <a class="game-card" data-title="スピードパズル" href="https://example.com/game1">
+          <img class="game-thumbnail" src="images/game1.webp" alt="スピードパズル">
+          <!-- ゲーム名テキストエリア（div.game-info）を削除しました -->
         </a>
 
         <!-- ゲーム 2 -->
-        <a class="game-card" data-title="あみだくじ" href="https://example.com/game2">
-          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1529699211952-734e80c4d42b?w=300&auto=format&fit=crop&q=60" alt="ゲーム2">
-          <div class="game-info">
-            <div class="game-title">あみだくじ</div>
-          </div>
+        <a class="game-card" data-title="テーブルリバーシ" href="https://example.com/game2">
+          <img class="game-thumbnail" src="images/game2.webp" alt="テーブルリバーシ">
         </a>
 
         <!-- ゲーム 3 -->
         <a class="game-card" data-title="デイリーソリティア" href="https://example.com/game3">
-          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1606168094336-48f205276929?w=300&auto=format&fit=crop&q=60" alt="ゲーム3">
-          <div class="game-info">
-            <div class="game-title">デイリーソリティア</div>
-          </div>
+          <img class="game-thumbnail" src="images/game3.webp" alt="デイリーソリティア">
         </a>
 
         <!-- ゲーム 4 -->
-        <a class="game-card" data-title="前世うらない" href="https://example.com/game4">
-          <img class="game-thumbnail" src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&auto=format&fit=crop&q=60" alt="ゲーム4">
-          <div class="game-info">
-            <div class="game-title">前世うらない</div>
-          </div>
+        <a class="game-card" data-title="ブロッククラッシュ" href="https://example.com/game4">
+          <img class="game-thumbnail" src="images/game4.webp" alt="ブロッククラッシュ">
         </a>
+        
       </div>
     </section>
   </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
 
   <script src="script.js"></script>
 </body>
