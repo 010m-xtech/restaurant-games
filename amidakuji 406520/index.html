@@ -218,20 +218,20 @@
         const RESULT_DATA = [
             {
                 // 左: ネギレバ(2本)
-                img: 'amidakuji 406520/画像1.png',
-                fallbackImg: 'https://placehold.co/400x300/818cf8/ffffff?text=%E3%83%8D%E3%82%AE%E3%83%AC%E3%83%90(2%E6%9C%AC)',
+                img: 'amidakuji%20406520/%E7%94%BB%E5%83%8F1.png',
+                fallbackImg: 'https://placehold.co/400x300/f59e0b/ffffff?text=NEGI-REBA',
                 text: 'ネギレバ(2本)'
             },
             {
                 // 真ん中: 鶏刺し盛り合わせ
-                img: 'amidakuji 406520/画像2.png',
-                fallbackImg: 'https://placehold.co/400x300/e879f9/ffffff?text=%E9%B6%8F%E3%81%95%E3%81%97%E7%9B%9B%E3%82%8A%E5%90%88%E3%82%8F%E3%81%9B',
+                img: 'amidakuji%20406520/%E7%94%BB%E5%83%8F2.png',
+                fallbackImg: 'https://placehold.co/400x300/ec4899/ffffff?text=TORI-SASHI',
                 text: '鶏刺し盛り合わせ'
             },
             {
                 // 右: 砂肝とエリンギのアヒージョ
-                img: 'amidakuji 406520/画像4.png',
-                fallbackImg: 'https://placehold.co/400x300/f43f5e/ffffff?text=%E7%A0%82%E8%82%9D%E3%81%A8%E2%80%9D%E3%82%A8%E3%83%AA%E3%83%B3%E3%82%AE%E3%81%AE%E3%82%A2%E3%83%92%E3%83%BC%E3%82%B8%E3%83%A7',
+                img: 'amidakuji%20406520/%E7%94%BB%E5%83%8F4.png',
+                fallbackImg: 'https://placehold.co/400x300/f43f5e/ffffff?text=AHIJO',
                 text: '砂肝とエリンギのアヒージョ'
             }
         ];
@@ -796,6 +796,7 @@
             resultImg.src = data.img;
             resultImg.onerror = function() {
                 this.onerror = null;
+                // 日本語の文字化けを防ぐため英字入りのフォールバック画像をセット
                 this.src = data.fallbackImg;
             };
             resultText.innerHTML = data.text; 
