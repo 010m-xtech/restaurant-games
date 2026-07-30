@@ -13,17 +13,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // ★店舗ごとのゲームURL定義（8店舗分をここに記述します）
   // URLの `?store=000001` などの値と一致させて、店舗ごとのゲームURLをセットしてください
   const STORE_GAME_URLS = {
-    "000001": {
-      "ルーレット": "https://010m-xtech.github.io/minigame/timeshock/",
+    "408440": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE408440",
       "あみだくじ": "https://010m-xtech.github.io/minigame/timeshock/",
       "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
-      "占い": "https://010m-xtech.github.io/minigame/timeshock/"
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_408440"
     },
-    "000002": {
-      "ルーレット": "https://010m-xtech.github.io/minigame/timeshock/",
+    "406520": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE406520",
       "あみだくじ": "https://010m-xtech.github.io/minigame/timeshock/",
       "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
-      "占い": "https://010m-xtech.github.io/minigame/timeshock/"
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_406520"
     },
     // ※必要に応じて 000003 〜 000008 まで同様に追加してください
   };
