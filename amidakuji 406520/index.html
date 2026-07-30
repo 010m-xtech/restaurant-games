@@ -148,7 +148,7 @@
         <!-- 松明エフェクト -->
         <div class="absolute top-[25%] left-[5%] pointer-events-none flex flex-col items-center z-0">
             <div class="w-3 h-4 bg-orange-500 rounded-full animate-flicker blur-[2px] absolute"></div>
-            <div class="w-2 h-3 bg-yellow-200 rounded-full animate-flicker absolute top-1"></div>
+            <div class="w-2 h-2 bg-yellow-200 rounded-full animate-flicker absolute top-1"></div>
             <div class="w-2 h-8 bg-stone-900 mt-3 rounded-sm border-l border-stone-700"></div>
             <div class="absolute top-0 w-32 h-32 bg-orange-500/15 rounded-full blur-2xl animate-flicker-slow"></div>
         </div>
@@ -201,9 +201,10 @@
             
             <div id="result-card" class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] p-4 shadow-[0_0_60px_rgba(255,215,0,0.6)] border-4 border-yellow-400 w-full max-w-sm mb-10 popup-enter relative overflow-hidden z-20">
                 <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/aged-paper.png')] opacity-30 mix-blend-overlay pointer-events-none"></div>
-                <img id="result-image" src="" alt="おすすめメニュー" 
-                     onerror="this.onerror=null; this.src='https://placehold.co/400x300/d97706/ffffff?text=MENU+IMAGE';" 
-                     class="w-full h-auto rounded-xl object-contain drop-shadow-[0_5px_15px_rgba(0,0,0,0.3)] mb-4 border-2 border-orange-200/50 relative z-10">
+                <div class="relative w-full h-56 sm:h-64 mb-4 flex items-center justify-center overflow-hidden rounded-xl bg-stone-200 border-2 border-orange-200/50 shadow-inner z-10">
+                    <img id="result-image" src="" alt="おすすめメニュー" 
+                         class="w-full h-full object-cover rounded-xl transition-all duration-300">
+                </div>
                 <!-- 結果テキスト表示エリア -->
                 <p id="result-text" class="text-lg sm:text-xl font-bold text-stone-800 leading-relaxed bg-white/90 p-4 rounded-xl shadow-inner backdrop-blur-sm border border-orange-200/50 relative z-10">
                     <!-- ここにテキストが入ります -->
@@ -214,23 +215,38 @@
 
     <script>
         // --- 設定値・定数 ---
-        // 結果データ（画像とテキスト）
+        // 各結果の画像パス候補（相対パス・GitHub Raw直リンク・ローカルパス）
         const RESULT_DATA = [
             {
                 // 左: ネギレバ(2本)
-                img: 'amidakuji%20406520/%E7%94%BB%E5%83%8F1.png',
+                sources: [
+                    '%E7%94%BB%E5%83%8F1.png',
+                    'https://raw.githubusercontent.com/010m-xtech/restaurant-games/main/amidakuji%20406520/%E7%94%BB%E5%83%8F1.png',
+                    '画像1.png',
+                    'amidakuji%20406520/%E7%94%BB%E5%83%8F1.png'
+                ],
                 fallbackImg: 'https://placehold.co/400x300/f59e0b/ffffff?text=NEGI-REBA',
                 text: 'ネギレバ(2本)'
             },
             {
                 // 真ん中: 鶏刺し盛り合わせ
-                img: 'amidakuji%20406520/%E7%94%BB%E5%83%8F2.png',
+                sources: [
+                    '%E7%94%BB%E5%83%8F2.png',
+                    'https://raw.githubusercontent.com/010m-xtech/restaurant-games/main/amidakuji%20406520/%E7%94%BB%E5%83%8F2.png',
+                    '画像2.png',
+                    'amidakuji%20406520/%E7%94%BB%E5%83%8F2.png'
+                ],
                 fallbackImg: 'https://placehold.co/400x300/ec4899/ffffff?text=TORI-SASHI',
                 text: '鶏刺し盛り合わせ'
             },
             {
                 // 右: 砂肝とエリンギのアヒージョ
-                img: 'amidakuji%20406520/%E7%94%BB%E5%83%8F4.png',
+                sources: [
+                    '%E7%94%BB%E5%83%8F4.png',
+                    'https://raw.githubusercontent.com/010m-xtech/restaurant-games/main/amidakuji%20406520/%E7%94%BB%E5%83%8F4.png',
+                    '画像4.png',
+                    'amidakuji%20406520/%E7%94%BB%E5%83%8F4.png'
+                ],
                 fallbackImg: 'https://placehold.co/400x300/f43f5e/ffffff?text=AHIJO',
                 text: '砂肝とエリンギのアヒージョ'
             }
@@ -252,30 +268,31 @@
         let lastTime = 0;
         let animationFrameId = null;
         let finalResultCol = 0;
-        let imagesLoaded = false;
         let confettiParticles = [];
         let confettiFrameId = null;
 
-        // --- 画像プレロード ---
-        function preloadGoalImages() {
-            let loadedCount = 0;
-            const checkDone = () => {
-                loadedCount++;
-                if (loadedCount >= RESULT_DATA.length) {
-                    imagesLoaded = true;
+        // 多重フォールバックで画像を安全にロードするヘルパー関数
+        function loadFallbackImage(imgElement, sources, finalFallback) {
+            let index = 0;
+            function tryNext() {
+                if (index < sources.length) {
+                    const src = sources[index++];
+                    imgElement.onerror = tryNext;
+                    imgElement.src = src;
+                } else {
+                    imgElement.onerror = null;
+                    imgElement.src = finalFallback;
                 }
-            };
+            }
+            tryNext();
+        }
+
+        // 画像の事前ロード
+        function preloadGoalImages() {
             RESULT_DATA.forEach(data => {
                 const img = new Image();
-                img.onload = checkDone;
-                img.onerror = () => {
-                    // もし指定のローカル画像が見つからない場合はプレースホルダーを設定
-                    img.src = data.fallbackImg;
-                    checkDone();
-                };
-                img.src = data.img;
+                loadFallbackImage(img, data.sources, data.fallbackImg);
             });
-            setTimeout(() => { imagesLoaded = true; }, 1000);
         }
 
         // --- 初期設定・レイアウト計算 ---
@@ -300,7 +317,6 @@
             holeY = logicalHeight * 0.52; 
         }
 
-        // --- あみだくじ（レール）の生成 ---
         function generateRungs() {
             rungs = [];
             const rungSpacing = 40; 
@@ -324,7 +340,6 @@
             addRungsInRegion(bottomRegionStart, bottomRegionEnd);
         }
 
-        // --- ルート計算ロジック ---
         function calculatePath(startColIndex) {
             pathCoords = [];
             let currentCol = startColIndex;
@@ -578,7 +593,6 @@
             const t1 = getTransformAtDist(dist); drawBeerCar(ctx, t1.x, t1.y, t1.angle, true);
         }
 
-        // --- メインループ ---
         function gameLoop(timestamp) {
             if (!lastTime) lastTime = timestamp;
             const deltaTime = timestamp - lastTime;
@@ -721,7 +735,6 @@
             }, 2000); 
         }
 
-        // 紙吹雪のアニメーションロジック
         function initConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             if (!canvas) return;
@@ -793,12 +806,9 @@
             const resultHeading = document.getElementById('result-heading');
             
             const data = RESULT_DATA[finalResultCol];
-            resultImg.src = data.img;
-            resultImg.onerror = function() {
-                this.onerror = null;
-                // 日本語の文字化けを防ぐため英字入りのフォールバック画像をセット
-                this.src = data.fallbackImg;
-            };
+            
+            // 安全な画像読み込み
+            loadFallbackImage(resultImg, data.sources, data.fallbackImg);
             resultText.innerHTML = data.text; 
 
             if (finalResultCol === 0) {
@@ -821,26 +831,6 @@
                     initConfetti();
                 }, 300);
             }, 50);
-        }
-
-        function resetGame() {
-            try {
-                stopConfetti();
-
-                const resultPhaseEl = document.getElementById('result-phase');
-                resultPhaseEl.classList.remove('opacity-100');
-                resultPhaseEl.classList.add('opacity-0', 'pointer-events-none');
-                document.getElementById('result-card').classList.remove('popup-enter-active');
-
-                setTimeout(() => {
-                    resultPhaseEl.classList.remove('flex');
-                    resultPhaseEl.classList.add('hidden');
-                    document.getElementById('buttons-container').style.opacity = '1';
-                    document.getElementById('buttons-container').style.pointerEvents = 'auto';
-
-                    initGame();
-                }, 500);
-            } catch (e) { console.error("Reset Error:", e); }
         }
 
         function initGame() {
