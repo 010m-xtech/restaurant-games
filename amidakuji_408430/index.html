@@ -112,7 +112,7 @@
     <div id="app-container" class="relative w-full max-w-md h-[100dvh] max-h-[950px] bg-stone-900 shadow-[0_0_50px_rgba(0,0,0,0.8)] overflow-hidden sm:rounded-[2rem] sm:h-[90vh] sm:border-8 border-stone-800">
         
         <!-- フェーズ0: 導入オープニング動画 -->
-        <div id="intro-phase" class="absolute inset-0 bg-black z-50 flex flex-col items-center justify-center transition-opacity duration-[2500ms] ease-in-out">
+        <div id="intro-phase" class="absolute inset-0 bg-black z-50 flex flex-col items-center justify-center transition-opacity duration-[2500ms] ease-in-out cursor-pointer">
             <video id="intro-video" 
                    src="https://github.com/user-attachments/assets/64c19cdf-8eda-4fbd-80e3-02353b2a6e4c" 
                    autoplay muted playsinline 
@@ -222,7 +222,7 @@
                 sources: [
                     'https://github.com/user-attachments/assets/837c85e9-5745-4e31-9c8a-5c12130eb30f'
                 ],
-                fallbackImg: 'https://placehold.co/400x300/10b981/ffffff?text=GYOZA',
+                fallbackImg: 'https://placehold.co/400x300/10b981/ffffff?text=%E5%B3%B6%E5%94%90%E8%BE%9B%E5%AD%90%E3%81%8E%E3%82%87%E3%81%86%E3%81%96',
                 text: '島唐辛子ぎょうざ'
             },
             {
@@ -230,7 +230,7 @@
                 sources: [
                     'https://github.com/user-attachments/assets/8727b493-5f75-43d9-b425-521e1f7774bd'
                 ],
-                fallbackImg: 'https://placehold.co/400x300/8b5cf6/ffffff?text=BENIIMO',
+                fallbackImg: 'https://placehold.co/400x300/8b5cf6/ffffff?text=%E7%B4%85%E8%8A%8B%E3%82%B3%E3%83%AD%E3%83%83%E3%82%B1',
                 text: '紅芋コロッケ'
             },
             {
@@ -238,7 +238,7 @@
                 sources: [
                     'https://github.com/user-attachments/assets/caaf7a64-5294-4f73-ba98-f7b94ffd6f94'
                 ],
-                fallbackImg: 'https://placehold.co/400x300/f59e0b/ffffff?text=SOBA',
+                fallbackImg: 'https://placehold.co/400x300/f59e0b/ffffff?text=%E6%B2%96%E7%B8%84%E3%81%9D%E3%81%B0',
                 text: '沖縄そば'
             }
         ];
@@ -509,7 +509,7 @@
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('?', 0, 2);
-            
+
             ctx.restore();
         }
 
