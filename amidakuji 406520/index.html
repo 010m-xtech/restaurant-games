@@ -223,7 +223,8 @@
                     'https://github.com/user-attachments/assets/09102163-d146-41d6-8010-9192a4439e2e'
                 ],
                 fallbackImg: 'https://placehold.co/400x300/f59e0b/ffffff?text=NEGI-REBA',
-                text: 'ネギレバ(2本)'
+                text: 'ネギレバ(2本)',
+                imgClass: 'w-full h-full object-cover rounded-xl transition-all duration-300'
             },
             {
                 // 真ん中: 鶏刺し盛り合わせ
@@ -231,7 +232,8 @@
                     'https://github.com/user-attachments/assets/00cf80a6-70e5-4113-b16b-7f0d038e1c29'
                 ],
                 fallbackImg: 'https://placehold.co/400x300/ec4899/ffffff?text=TORI-SASHI',
-                text: '鶏刺し盛り合わせ'
+                text: '鶏刺し盛り合わせ',
+                imgClass: 'w-full h-full object-contain p-1 rounded-xl transition-all duration-300'
             },
             {
                 // 右: 砂肝とエリンギのアヒージョ
@@ -239,7 +241,8 @@
                     'https://github.com/user-attachments/assets/52523b75-173b-403c-bfc6-6b32767d8094'
                 ],
                 fallbackImg: 'https://placehold.co/400x300/f43f5e/ffffff?text=AHIJO',
-                text: '砂肝とエリンギのアヒージョ'
+                text: '砂肝とエリンギのアヒージョ',
+                imgClass: 'w-full h-full object-cover rounded-xl transition-all duration-300'
             }
         ];
         const TRAIN_SPEED = 120; 
@@ -801,6 +804,9 @@
             // 安全な画像読み込み
             loadFallbackImage(resultImg, data.sources, data.fallbackImg);
             resultText.innerHTML = data.text; 
+            if (data.imgClass) {
+                resultImg.className = data.imgClass;
+            }
 
             if (finalResultCol === 0) {
                 resultHeading.innerHTML = '大吉！！<br><span class="text-base sm:text-xl leading-relaxed mt-2 block">もっといい運勢にするには<br>下のメニューを食べてね！</span>';
