@@ -217,16 +217,22 @@
         // 結果データ（画像とテキスト）
         const RESULT_DATA = [
             {
-                img: 'https://github.com/user-attachments/assets/da46e8c4-3582-430b-9b45-1469bc9cd7e0',
-                text: '名物　マーラーフライドチキン<br>10種類のオリジナルスパイスで味付けチューリップ唐揚げ'
+                // 左: ネギレバ(2本)
+                img: 'amidakuji 406520/画像1.png',
+                fallbackImg: 'https://placehold.co/400x300/818cf8/ffffff?text=%E3%83%8D%E3%82%AE%E3%83%AC%E3%83%90(2%E6%9C%AC)',
+                text: 'ネギレバ(2本)'
             },
             {
-                img: 'https://github.com/user-attachments/assets/318f6ab8-cba5-4776-b028-2040ec289e32',
-                text: '名物　マーラー麺<br>見てびっくり！食べてびっくり！'
+                // 真ん中: 鶏刺し盛り合わせ
+                img: 'amidakuji 406520/画像2.png',
+                fallbackImg: 'https://placehold.co/400x300/e879f9/ffffff?text=%E9%B6%8F%E3%81%95%E3%81%97%E7%9B%9B%E3%82%8A%E5%90%88%E3%82%8F%E3%81%9B',
+                text: '鶏刺し盛り合わせ'
             },
             {
-                img: 'https://github.com/user-attachments/assets/1840e458-cde3-4cbb-8c32-52e6295b21d9',
-                text: '速達生ビール<br>工場出荷2日以内新鮮なビール！'
+                // 右: 砂肝とエリンギのアヒージョ
+                img: 'amidakuji 406520/画像4.png',
+                fallbackImg: 'https://placehold.co/400x300/f43f5e/ffffff?text=%E7%A0%82%E8%82%9D%E3%81%A8%E2%80%9D%E3%82%A8%E3%83%AA%E3%83%B3%E3%82%AE%E3%81%AE%E3%82%A2%E3%83%92%E3%83%BC%E3%82%B8%E3%83%A7',
+                text: '砂肝とエリンギのアヒージョ'
             }
         ];
         const TRAIN_SPEED = 120; 
@@ -262,7 +268,11 @@
             RESULT_DATA.forEach(data => {
                 const img = new Image();
                 img.onload = checkDone;
-                img.onerror = checkDone;
+                img.onerror = () => {
+                    // もし指定のローカル画像が見つからない場合はプレースホルダーを設定
+                    img.src = data.fallbackImg;
+                    checkDone();
+                };
                 img.src = data.img;
             });
             setTimeout(() => { imagesLoaded = true; }, 1000);
@@ -784,6 +794,10 @@
             
             const data = RESULT_DATA[finalResultCol];
             resultImg.src = data.img;
+            resultImg.onerror = function() {
+                this.onerror = null;
+                this.src = data.fallbackImg;
+            };
             resultText.innerHTML = data.text; 
 
             if (finalResultCol === 0) {
