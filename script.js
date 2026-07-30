@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // ★ここにGASのウェブアプリURLを貼り付けてください
+  // ★ここにGASのウェブアプリURLを貼り付けてください（元のURLを維持しています）
   const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby-QMhndXONUWbP1eEN9v9d7iJJcCAnOESGe7NMwzb2X2NsVX__P7mKx7ZihA7YA1Vk/exec';
 
   const surveySection = document.getElementById('survey-section');
@@ -9,6 +9,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const STORAGE_KEY = 'restaurant_game_user_profile';
   const DEVICE_ID_KEY = 'restaurant_game_device_id';
+
+  // ★店舗ごとのゲームURL定義（8店舗分をここに記述します）
+  // URLの `?store=000001` などの値と一致させて、店舗ごとのゲームURLをセットしてください
+  const STORE_GAME_URLS = {
+    "000001": {
+      "ルーレット": "https://010m-xtech.github.io/minigame/timeshock/",
+      "あみだくじ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/minigame/timeshock/"
+    },
+    "000002": {
+      "ルーレット": "https://010m-xtech.github.io/minigame/timeshock/",
+      "あみだくじ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/minigame/timeshock/"
+    },
+    // ※必要に応じて 000003 〜 000008 まで同様に追加してください
+  };
 
   // --- デバイスIDの取得または新規発行 ---
   function getDeviceId() {
@@ -37,6 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const currentDeviceId = getDeviceId();
   const currentStoreId = getStoreId();
   const savedProfile = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+  // --- 店舗に応じたゲームURLの動的セット関数 ---
+  function setGameUrlsForCurrentStore() {
+    const storeUrls = STORE_GAME_URLS[currentStoreId];
+    if (storeUrls) {
+      gameCards.forEach(card => {
+        const title = card.getAttribute('data-title');
+        if (storeUrls[title]) {
+          card.setAttribute('href', storeUrls[title]);
+        }
+      });
+    }
+  }
+
+  // 画面ロード時に店舗別URLに差し替え実行
+  setGameUrlsForCurrentStore();
 
   // --- スプレッドシート（GAS）へ非同期送信 ---
   function sendToSheet(payload) {
@@ -112,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
       e.preventDefault();
 
       const gameTitle = card.getAttribute('data-title');
-      const targetUrl = card.getAttribute('href');
+      const targetUrl = card.getAttribute('href'); // 店舗別に差し替わった最新URLを取得
       const profile = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
 
       // ゲームタップログ送信
