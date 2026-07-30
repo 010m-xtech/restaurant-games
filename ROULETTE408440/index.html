@@ -1019,9 +1019,9 @@
             const getDynamicTextClass = (text) => {
                 if (!text) return 'text-5xl md:text-6xl';
                 const len = text.length;
-                if (len >= 11) return 'text-2xl md:text-3xl';
-                if (len >= 8) return 'text-3xl md:text-4xl';
-                if (len >= 6) return 'text-4xl md:text-5xl';
+                if (len >= 11) return 'text-3xl md:text-4xl';
+                if (len >= 8) return 'text-4xl md:text-5xl';
+                if (len >= 6) return 'text-5xl md:text-6xl';
                 return 'text-5xl md:text-6xl';
             };
             
@@ -1036,17 +1036,19 @@
                         <div class="relative inline-block transform -skew-x-12 mt-4">
                             <h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text rainbow-text drop-shadow-[0_0_30px_rgba(255,0,0,0.8)] whitespace-nowrap">反逆の裁き!!</h2>
                         </div>
-                        <div class="modal-cinematic-reverse p-6 rounded-2xl relative overflow-hidden mt-8 shadow-[0_0_30px_rgba(255,0,0,0.3)] border-0 w-full">
+                        <div class="modal-cinematic-reverse p-6 rounded-2xl relative overflow-hidden mt-8 shadow-[0_0_30px_rgba(255,0,0,0.3)] border-0 w-full flex flex-col items-center">
                             <p class="text-2xl font-bold text-red-500 mb-3 drop-shadow-md">身代わり確定</p>
-                            <p class="${sizeClass} font-black text-cinematic-reverse uppercase w-full break-words leading-tight">${victimName}</p>
+                            <div class="w-full flex justify-center items-center max-w-full">
+                                <p class="result-text-fit ${sizeClass} font-black text-cinematic-reverse uppercase whitespace-nowrap leading-tight origin-center">${victimName}</p>
+                            </div>
                         </div>
                     `;
                 } else if (state.spinResult?.type === 'split') {
-                    html = `<p class="text-5xl md:text-6xl font-black text-cinematic-reverse mt-6 uppercase break-words leading-tight">全員割り勘</p>`;
+                    html = `<div class="w-full flex justify-center max-w-full"><p class="result-text-fit text-5xl md:text-6xl font-black text-cinematic-reverse mt-6 uppercase whitespace-nowrap leading-tight origin-center">全員割り勘</p></div>`;
                 } else {
                     const resultText = state.spinResult?.type === 'player' ? state.spinResult.player.name : state.spinResult?.label;
                     const sizeClass = getDynamicTextClass(resultText);
-                    html = `<p class="${sizeClass} font-black text-cinematic-reverse px-2 mt-6 uppercase w-full break-words leading-tight">${resultText}</p>`;
+                    html = `<div class="w-full flex justify-center max-w-full"><p class="result-text-fit ${sizeClass} font-black text-cinematic-reverse px-2 mt-6 uppercase whitespace-nowrap leading-tight origin-center">${resultText}</p></div>`;
                 }
             } else {
                 DOM.resultModal.classList.add('modal-cinematic');
@@ -1059,17 +1061,19 @@
                         <div class="relative inline-block transform -skew-x-12 mt-4">
                             <h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text rainbow-text drop-shadow-[0_0_30px_rgba(255,255,255,0.8)] whitespace-nowrap">起死回生!!</h2>
                         </div>
-                        <div class="modal-cinematic p-6 rounded-2xl relative overflow-hidden mt-8 w-full">
+                        <div class="modal-cinematic p-6 rounded-2xl relative overflow-hidden mt-8 w-full flex flex-col items-center">
                             <p class="text-2xl font-bold text-gray-300 mb-3 drop-shadow-md">身代わり確定</p>
-                            <p class="${sizeClass} font-black text-cinematic-gold uppercase w-full break-words leading-tight">${victimName}</p>
+                            <div class="w-full flex justify-center items-center max-w-full">
+                                <p class="result-text-fit ${sizeClass} font-black text-cinematic-gold uppercase whitespace-nowrap leading-tight origin-center">${victimName}</p>
+                            </div>
                         </div>
                     `;
                 } else if (state.spinResult?.type === 'split') {
-                    html = `<p class="text-5xl md:text-6xl font-black text-cinematic-gold mt-6 uppercase break-words leading-tight">全員割り勘</p>`;
+                    html = `<div class="w-full flex justify-center max-w-full"><p class="result-text-fit text-5xl md:text-6xl font-black text-cinematic-gold mt-6 uppercase whitespace-nowrap leading-tight origin-center">全員割り勘</p></div>`;
                 } else {
                     const resultText = state.spinResult?.type === 'player' ? state.spinResult.player.name : state.spinResult?.label;
                     const sizeClass = getDynamicTextClass(resultText);
-                    html = `<p class="${sizeClass} font-black text-cinematic-gold px-2 mt-6 uppercase w-full break-words leading-tight">${resultText}</p>`;
+                    html = `<div class="w-full flex justify-center max-w-full"><p class="result-text-fit ${sizeClass} font-black text-cinematic-gold px-2 mt-6 uppercase whitespace-nowrap leading-tight origin-center">${resultText}</p></div>`;
                 }
             }
             
@@ -1078,6 +1082,27 @@
             void DOM.resultOverlay.offsetWidth;
             DOM.resultOverlay.classList.remove('opacity-0');
             DOM.resultModal.classList.remove('translate-y-12', 'scale-90');
+
+            // 1行に収まるようにフォントのスケールを自動調整
+            const adjustTextSize = () => {
+                const textElements = DOM.resultContent.querySelectorAll('.result-text-fit');
+                textElements.forEach(el => {
+                    // 一旦transformを解除して本来の幅を再計測
+                    el.style.transform = 'none';
+                    const parentWidth = el.parentElement.clientWidth;
+                    const textWidth = el.scrollWidth;
+                    
+                    if (textWidth > parentWidth && textWidth > 0) {
+                        // 少し余裕をもたせる(0.95)
+                        const scale = (parentWidth * 0.95) / textWidth;
+                        el.style.transform = `scale(${scale})`;
+                    }
+                });
+            };
+            
+            // 初回実行と、アニメーション完了後にもう一度実行して確実にする
+            setTimeout(adjustTextSize, 50);
+            setTimeout(adjustTextSize, 550);
         }
 
         function setWheelRotation(wheelDeg, durationMs, wheelEase) {
