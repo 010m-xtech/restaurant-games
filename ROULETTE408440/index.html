@@ -584,6 +584,18 @@
         const SLICES_PER_PLAYER = 6;
         const SPECIAL_SLICE_DEG = 6;
 
+        // フードの候補リスト
+        const FOOD_CANDIDATES = [
+            '島豆腐のゴーヤチャンプル',
+            'シンプルだしまき玉子',
+            '島唐辛子ぎょうざ',
+            '紅芋コロッケ',
+            '沖縄そば',
+            '長芋ガーリックフライ',
+            'ツルッと！沖縄産ざるモズク',
+            'カーリーフライ'
+        ];
+
         const COLORS = [
             'url(#red-velvet)', 
             'url(#black-metal)', 
@@ -742,19 +754,19 @@
             DOM.increasePlayersBtn.disabled = state.players.length >= 20;
 
             state.players.forEach((p, index) => {
-            const el = document.createElement('div');
-            el.className = "flex flex-col gap-2 bg-gradient-to-r from-[#1a0505] to-[#050505] p-3 rounded-xl border border-red-900/50 shadow-[0_5px_15px_rgba(0,0,0,0.8)] animate-[fadeIn_0.3s_ease-out]";
-            
-            el.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="text-yellow-400 font-black text-2xl drop-shadow-[0_0_8px_rgba(255,215,0,1)] w-8 text-center shrink-0">${index + 1}</span>
-                    <input type="text" value="${p.name}" class="player-name-input flex-1 bg-[#0a0a0a] text-white font-bold px-3 py-2 rounded-lg border border-red-900/30 focus:border-yellow-500 focus:outline-none transition-colors shadow-inner placeholder-gray-500" placeholder="入力..." data-id="${p.id}"/>
-                </div>
-            `;
-            DOM.playerList.appendChild(el);
-        });
+                const el = document.createElement('div');
+                el.className = "flex flex-col gap-2 bg-gradient-to-r from-[#1a0505] to-[#050505] p-3 rounded-xl border border-red-900/50 shadow-[0_5px_15px_rgba(0,0,0,0.8)] animate-[fadeIn_0.3s_ease-out]";
+                
+                el.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-yellow-400 font-black text-2xl drop-shadow-[0_0_8px_rgba(255,215,0,1)] w-8 text-center shrink-0">${index + 1}</span>
+                        <input type="text" value="${p.name}" class="player-name-input flex-1 bg-[#0a0a0a] text-white font-bold px-3 py-2 rounded-lg border border-red-900/30 focus:border-yellow-500 focus:outline-none transition-colors shadow-inner placeholder-gray-500" placeholder="入力..." data-id="${p.id}"/>
+                    </div>
+                `;
+                DOM.playerList.appendChild(el);
+            });
 
-        document.querySelectorAll('.player-name-input').forEach(input => {
+            document.querySelectorAll('.player-name-input').forEach(input => {
                 input.addEventListener('change', (e) => {
                     const player = state.players.find(p => p.id === parseInt(e.target.dataset.id));
                     if (player) player.name = e.target.value;
@@ -825,6 +837,8 @@
                     // フード用
                     if (displayLabel === '島豆腐のゴーヤチャンプル') displayLabel = 'ゴーヤチャンプル';
                     if (displayLabel === 'シンプルだしまき玉子') displayLabel = 'だしまき玉子';
+                    if (displayLabel === '長芋ガーリックフライ') displayLabel = 'ガーリックフライ';
+                    if (displayLabel === 'ツルッと！沖縄産ざるモズク') displayLabel = 'ざるモズク';
                     // ドリンク用
                     if (displayLabel === 'プレモル　香るエール') displayLabel = 'プレモル';
                     if (displayLabel === '南国ハイボール') displayLabel = 'ハイボール';
@@ -983,7 +997,7 @@
 
             if (newState === 'result') {
                 showResultModal();
-                // 逆転演出が確定している場合、1回目の結果発表と同時にBGMを停止（違和感の演出）
+                // 逆転演出が確定している場合、1回目の結果発表と同時にBGMを停止（違敬感の演出）
                 if (state.willReverse) {
                     DOM.bgmAudio.pause();
                 }
@@ -1462,7 +1476,17 @@
 
         DOM.increasePlayersBtn.addEventListener('click', () => {
             if (state.players.length < 20) {
-                state.players.push({ id: Date.now(), name: '', penalties: 0 });
+                let newName = '';
+                // 「フードを決める」が選ばれている場合、未表示の項目からランダムに補完する
+                if (state.theme === 'フードを決める') {
+                    const currentNames = state.players.map(p => p.name);
+                    const availableFoods = FOOD_CANDIDATES.filter(f => !currentNames.includes(f));
+                    if (availableFoods.length > 0) {
+                        newName = availableFoods[Math.floor(Math.random() * availableFoods.length)];
+                    }
+                }
+                
+                state.players.push({ id: Date.now(), name: newName, penalties: 0 });
                 renderSetupView();
                 calculateSlices();
             }
@@ -1519,14 +1543,21 @@
             
             // 「フードを決める」が選択された場合の強制設定
             if (value === 'フードを決める') {
-                state.players = [
-                    { id: 1, name: '島豆腐のゴーヤチャンプル', penalties: 0 },
-                    { id: 2, name: 'シンプルだしまき玉子', penalties: 0 },
-                    { id: 3, name: '島唐辛子ぎょうざ', penalties: 0 },
-                    { id: 4, name: '紅芋コロッケ', penalties: 0 },
-                    { id: 5, name: '沖縄そば', penalties: 0 },
-                    { id: 6, name: '鮮馬刺し二種盛り', penalties: 0 }
-                ];
+                // 候補をランダムにシャッフル
+                const shuffled = [...FOOD_CANDIDATES];
+                for (let i = shuffled.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                
+                // シャッフルされた中から先頭の6つを取得
+                const selectedFoods = shuffled.slice(0, 6);
+                
+                state.players = selectedFoods.map((food, index) => ({
+                    id: index + 1,
+                    name: food,
+                    penalties: 0
+                }));
             } else {
                 // それ以外が選択された場合は初期状態(2つの空枠)にリセット
                 state.players = [
