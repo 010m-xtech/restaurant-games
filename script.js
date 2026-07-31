@@ -13,17 +13,59 @@ document.addEventListener('DOMContentLoaded', () => {
   // ★店舗ごとのゲームURL定義（8店舗分をここに記述します）
   // URLの `?store=000001` などの値と一致させて、店舗ごとのゲームURLをセットしてください
   const STORE_GAME_URLS = {
-    "408440": {
-      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE408440",
-      "あみだくじ": "https://010m-xtech.github.io/minigame/timeshock/",
+    "408430": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE408430",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_408430",
       "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
-      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_408440"
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_408430"
+    },
+    "198080": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE198080",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_198080",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_198080"
+    },
+    "156430": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE156430",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_156430",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_156430"
+    },
+    "158200": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE158200",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_158200",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_158200"
+    },
+    "160070": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE160070",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_160070",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_160070"
     },
     "406520": {
       "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE406520",
-      "あみだくじ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_406520",
       "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
       "占い": "https://010m-xtech.github.io/restaurant-games/uranai_406520"
+    },
+    "408440": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE408440",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_408440",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_408440"
+    },
+    "002960": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE002960",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_002960",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_002960"
+    },
+    "026200": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE026200",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_026200",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_026200"
     },
     // ※必要に応じて 000003 〜 000008 まで同様に追加してください
   };
