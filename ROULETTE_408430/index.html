@@ -227,7 +227,6 @@
             pointer-events: none;
         }
         /* ▲▲▲ 逆転結果表示用CSS追加 ▲▲▲ */
-        /* ▲▲▲ 追加ここまで ▲▲▲ */
 
         .shadow-cinematic {
             filter: drop-shadow(0px 1px 0px #888)
@@ -592,7 +591,7 @@
             '紅芋コロッケ',
             '沖縄そば',
             '長芋ガーリックフライ',
-            'ツルッと！沖縄産ざるモズク',
+            '沖縄産太もずく',
             'カーリーフライ'
         ];
 
@@ -838,7 +837,7 @@
                     if (displayLabel === '島豆腐のゴーヤチャンプル') displayLabel = 'ゴーヤチャンプル';
                     if (displayLabel === 'シンプルだしまき玉子') displayLabel = 'だしまき玉子';
                     if (displayLabel === '長芋ガーリックフライ') displayLabel = 'ガーリックフライ';
-                    if (displayLabel === 'ツルッと！沖縄産ざるモズク') displayLabel = 'ざるモズク';
+                    if (displayLabel === '沖縄産太もずく') displayLabel = 'もずく';
                     // ドリンク用
                     if (displayLabel === 'プレモル　香るエール') displayLabel = 'プレモル';
                     if (displayLabel === '南国ハイボール') displayLabel = 'ハイボール';
@@ -1575,6 +1574,7 @@
             state.customTheme = e.target.value;
         });
 
+        // 初期化
         renderSetupView();
         calculateSlices();
     </script>
