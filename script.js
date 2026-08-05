@@ -67,6 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
       "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
       "占い": "https://010m-xtech.github.io/restaurant-games/uranai_026200"
     },
+     "026201": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE_026200",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_026200",
+      "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_026200"
+    },
     // ※必要に応じて 000003 〜 000008 まで同様に追加してください
   };
 
