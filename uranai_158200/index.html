@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>前世診断</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Helvetica Neue', Arial, sans-serif;
+      background-color: #0d0e15;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* 全体コンテナ */
+    .container {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 画面切り替えクラス */
+    .screen {
+      display: none;
+      width: 100%;
+      min-height: 100vh;
+      padding: 25px 20px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .screen.active {
+      display: flex;
+    }
+
+    /* ① 設問画面：背景画像「background.jpg」 */
+    #quiz-screen {
+      background-image: url('background.jpg'); 
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    #quiz-screen::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(10, 15, 30, 0.75);
+      z-index: 1;
+    }
+
+    .quiz-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      color: #ff3366;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255, 51, 102, 0.8);
+      text-align: center;
+      font-weight: bold;
+    }
+
+    p.subtitle {
+      font-size: 0.95rem;
+      color: #e0e0e0;
+      line-height: 1.6;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    /* フォーム要素 */
+    .form-group {
+      width: 100%;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+      color: #f0f0f0;
+      font-weight: bold;
+      line-height: 1.4;
+    }
+
+    select {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background-color: rgba(20, 25, 45, 0.85);
+      color: #fff;
+      font-size: 0.95rem;
+      backdrop-filter: blur(5px);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    select:focus {
+      border-color: #ff3366;
+      box-shadow: 0 0 10px rgba(255, 51, 102, 0.3);
+    }
+
+    .select-wrapper {
+      position: relative;
+      width: 100%;
+    }
+    .select-wrapper::after {
+      content: '▼';
+      font-size: 0.8rem;
+      color: #ccc;
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    /* 生年月日：年月日 横並びレイアウト */
+    .birth-group {
+      display: flex;
+      gap: 8px;
+    }
+    .birth-group .select-wrapper { flex: 1; }
+    .birth-group select { padding: 14px 8px; text-align: center; }
+
+    /* ボタンデザイン */
+    .btn {
+      width: 100%;
+      padding: 18px;
+      border: none;
+      border-radius: 35px;
+      background: linear-gradient(45deg, #ff3366, #ff6633);
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 25px rgba(255, 51, 102, 0.6);
+      margin-top: 15px;
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    /* ② 動画再生画面 */
+    #video-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: #000;
+      z-index: 100;
+      display: none;
+    }
+
+    #time-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ③ 結果画面：背景画像「result_bg.jpg」 */
+    #result-screen {
+      background-image: url('result_bg.jpg'); 
+      background-repeat: no-repeat;
+      background-position: center center;
+      background-size: cover;
+      background-attachment: fixed;
+    }
+
+    #result-screen::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(10, 10, 20, 0.65);
+      z-index: 1;
+    }
+
+    .result-content {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 🎨 診断結果カード */
+    .result-card {
+      background: rgba(18, 22, 40, 0.92);
+      border-radius: 20px;
+      padding: 20px;
+      border: 2px solid #ff3366;
+      box-shadow: 0 0 25px rgba(255, 51, 102, 0.4);
+      backdrop-filter: blur(12px);
+      width: 100%;
+      text-align: center;
+      margin-bottom: 15px;
+    }
+
+    /* イラスト表示エリア */
+    .hero-img-container {
+      width: 100%;
+      height: 190px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .hero-img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .past-life-title {
+      font-size: 1.55rem;
+      color: #ffd700; /* この「黄色」と同じにします */
+      margin-bottom: 14px;
+      font-weight: bold;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      line-height: 1.35;
+    }
+
+    /* エピソードボックス */
+    .story-box {
+      background: rgba(0, 0, 0, 0.4);
+      border-left: 3px solid #ff3366;
+      padding: 12px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #e0e0e0;
+      text-align: left;
+      margin-bottom: 14px;
+    }
+
+    /* 現世への影響ボックス */
+    .impact-box {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: left;
+      margin-bottom: 14px;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    .impact-item { margin-bottom: 6px; }
+    .impact-item:last-child { margin-bottom: 0; }
+    .impact-tag-talent { color: #4deeea; font-weight: bold; }
+    .impact-tag-weak { color: #ff6b6b; font-weight: bold; }
+
+    /* 🍺 おすすめメニュー表示ボックス */
+    .menu-box-large {
+      background: linear-gradient(135deg, rgba(255, 153, 51, 0.15), rgba(255, 51, 102, 0.15));
+      padding: 16px 12px;
+      border-radius: 12px;
+      border: 1.5px dashed #ff9933;
+      box-shadow: inset 0 0 15px rgba(255, 153, 51, 0.1);
+    }
+    .menu-box-title {
+      color: #ff9933;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    
+    /* 🎨 ここを修正しました：メニュー名（「具だくさんミックスピザ」など）のスタイル */
+    .menu-box-value {
+      /* 文字色を白(#fff)から、称号と同じ黄色(#ffd700)へ変更 */
+      color: #ffd700;
+      font-weight: bold;
+      font-size: 1.25rem;
+      line-height: 1.35;
+      /* 黄色の光を強調 */
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div id="quiz-screen" class="screen active">
+      <div class="quiz-content">
+        <h1>前世診断</h1>
+        <p class="subtitle">普段の何気ない行動からあなたの前世を占います。<br>直感でお答えください</p>
+
+        <div class="form-group">
+          <label>① 生年月日</label>
+          <div class="birth-group">
+            <div class="select-wrapper"><select id="birth-year"></select></div>
+            <div class="select-wrapper"><select id="birth-month"></select></div>
+            <div class="select-wrapper"><select id="birth-day"></select></div>
+          </div>
+        </div>
+
+        <div id="random-questions-container"></div>
+
+        <button class="btn" onclick="startTimeSlip()">⏳ 前世へタイムスリップ！</button>
+      </div>
+    </div>
+
+    <div id="video-screen">
+      <video id="time-video" playsinline muted webkit-playsinline preload="auto">
+        <source src="time-travel.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div id="result-screen" class="screen">
+      <div class="result-content">
+        <div class="result-card">
+          
+          <div class="hero-img-container">
+            <img id="res-img" src="" alt="前世イラスト">
+          </div>
+
+          <div class="past-life-title" id="res-title">称号が入ります</div>
+
+          <div class="story-box">
+            <span id="res-story">ここに短いエピソードが入ります。</span>
+          </div>
+
+          <div class="impact-box">
+            <div class="impact-item">
+              <span class="impact-tag-talent">✨ 今の才能：</span>
+              <span id="res-talent">才能の説明</span>
+            </div>
+            <div class="impact-item">
+              <span class="impact-tag-weak">🌀 今の弱点：</span>
+              <span id="res-weak">弱点の説明</span>
+            </div>
+          </div>
+
+          <div class="menu-box-large">
+            <div class="menu-box-title">🍺 前世あなたが愛したソウルフード</div>
+            <div class="menu-box-value" id="res-menu">メニュー名</div>
+          </div>
+
+        </div>
+
+        <button class="btn" onclick="resetQuiz()">🔄 もう一度診断する</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // ランダム質問プール
+    const questionPool = [
+      { text: "カフェやレストランで座るならどこを選びがち？", options: ["壁際のすみっこ", "出入口に近い席", "外が見える窓際の席", "店内全体が見渡せる席"] },
+      { text: "部屋でくつろぐとき、どんな姿勢が多い？", options: ["体育座り（膝を抱える）", "横になってゴロゴロする", "正座やあぐら", "椅子やソファに深々と腰掛ける"] },
+      { text: "一番「落ち着く」と感じる部屋の明るさは？", options: ["間接照明や薄暗い部屋", "自然光が入る明るい部屋", "完全な真っ暗闇", "賑やかな照明（蛍光灯など）"] },
+      { text: "無意識に「安心する」香りはどれ？", options: ["雨の日の濡れた土や草の香り", "焚き火や薪の煙の香り", "古い本や木造の匂い", "潮風や海の香り"] },
+      { text: "買い物中、無意識に目が行ってしまう色は？", options: ["深い青や黒などのダークカラー", "太陽や炎を連想させる赤・オレンジ", "森や大地のような緑・ブラウン", "光や神秘を感じさせる白・ゴールド"] },
+      { text: "夢を見ているとき、よくあるシチュエーションは？", options: ["空を飛んでいる、または高い所から落ちる", "何かにひたすら追われている", "見知らぬ時代や外国の街を歩いている", "懐かしい人や知らない人と話している"] },
+      { text: "初対面の人と接するとき、無意識にとる距離感は？", options: ["少し遠めに立ち、相手を観察する", "すぐに打ち解けて距離を詰める", "相手の出方に完全に合わせる", "後ろや斜めから様子を伺う"] },
+      { text: "服を選ぶとき、一番重視するポイントは？", options: ["動きやすさ・機能性", "肌触りの良さ・着心地", "自分を守れるか（防寒・露出の少なさ等）", "周りからどう見られるか（見た目）"] }
+    ];
+
+    // 結果データ
+    const results = [
+      {
+        title: "🛡️ 仲間を絶対に裏切らない<br>伝説の騎士",
+        img: "result1.webp",
+        story: "中世の戦場にて、最前線で味方の盾となり王国を守り抜いた。最期は仲間の笑顔に見送られ静かに眠りについた。",
+        talent: "圧倒的な正義感と、いざという時の頼りがい",
+        weak: "情に厚すぎて、断れずに損をしてしまいがち",
+        menu: "HANZOの<br>だしまき明太マヨ"
+      },
+      {
+        title: "🍡 商売上手な<br>江戸のほっこり団子屋",
+        img: "result2.webp",
+        story: "城下町で誰もが立ち寄る名物茶屋を切り盛り。笑顔と美味いお茶で、街中の人々の悩みと空腹を癒やし続けた人生。",
+        talent: "相手の懐にスッと入る抜群のコミュ力",
+        weak: "お人好しで、ついついサービスしすぎてしまう",
+        menu: "HANZOの<br>キノコとブルーチーズの<br>ホワイトソース煮"
+      },
+      {
+        title: "🏴‍☠️ 嵐を恐れない<br>大航海時代のカリスマ船長",
+        img: "result3.webp",
+        story: "未開の海を求め、仲間と共に世界の果てまで旅をした。数々のピンチを豪快な笑いと度胸で切り抜けた伝説の大海賊。",
+        talent: "常識にとらわれない直感力と決断力",
+        weak: "退屈に耐えられず、じっとしているとイライラする",
+        menu: "HANZOの<br>ローストビーフ"
+      },
+      {
+        title: "🐾 日向ぼっこを愛する<br>気ままな街の野良猫",
+        img: "result4.webp",
+        story: "港町のあちこちを散歩し、美味しいものを分けてもらいながら自由に生きた。みんなに愛された街のアイドル猫。",
+        talent: "自分の心地よさを優先できる自己肯定感",
+        weak: "気分屋で、急に興味を失う気まぐれさ",
+        menu: "HANZOの<br>名古屋名物どて煮"
+      },
+      {
+        title: "🔮 未来を見通す<br>宮廷の星読み師",
+        img: "result5.webp",
+        story: "高い塔の上で星の動きを観察し、王国の運命を導いた賢者。静かな夜空と対話しながら真理を求め続けた生涯。",
+        talent: "物事の違和感や本質を一瞬で見抜く観察眼",
+        weak: "考えすぎて頭がいっぱいになり不眠になりやすい",
+        menu: "HANZOの<br>ガーリックバター<br>フライドポテト"
+      },
+      {
+        title: "⚙️ 密かに世界を変えた<br>からくり屋敷の発明家",
+        img: "result6.webp",
+        story: "山奥の研究所で夜な夜なヘンテコな道具を作り続けた。人々をアッと言わせる瞬間を何より愛した孤高のクリエイター。",
+        talent: "1つのことに没頭したときの爆発的な集中力",
+        weak: "こだわりが強すぎて周りの意見を聞かなくなる",
+        menu: "HANZOの<br>マルゲリータ"
+      },
+      {
+        title: "🐻 誰もを温かく包み込む<br>森の長老グマ",
+        img: "result7.webp",
+        story: "深い森の奥で、迷い込んだ動物たちに木の実を分け与えていた。どっしり構えた姿で森の平和を守り抜いた頼れる存在。",
+        talent: "いるだけで周囲に安心感を与える圧倒的包容力",
+        weak: "のんびりしすぎて約束の時間に遅れがち",
+        menu: "HANZOの<br>枝豆のつかみ取り"
+      },
+      {
+        title: "🍷 宴を華やかに彩る<br>ヴェネツィアの貴族",
+        img: "result8.webp",
+        story: "水の都で夜な夜な華やかなパーティーを開催。美味しいワインと音楽を愛し、人々の笑顔に囲まれて人生を満喫した。",
+        talent: "華やかな場での立ち振る舞いと高い美意識",
+        weak: "見栄を張りすぎて財布の紐がゆるくなりがち",
+        menu: "HANZOの<br>肩ロースステーキ"
+      },
+      {
+        title: "🌠 宇宙から舞い降りた<br>流れ星の旅人",
+        img: "result9.webp",
+        story: "銀河を旅する途中で地球の美しさに惹かれ、しばしの滞在を楽しんだ。独特な感性で人々に笑顔と奇跡をもたらした。",
+        talent: "常識の枠にハマらないユニークな発想力",
+        weak: "現実的な細かい作業や書類手続きが大の苦手",
+        menu: "HANZOの<br>ピリ辛きゅうり"
+      },
+      {
+        title: "📜 一語一会を慈しむ<br>古書の街の図書委員長",
+        img: "result10.webp",
+        story: "静寂に包まれた図書室で、たくさんの物語を守り続けた。ひそかに訪れる人々にぴったりの一冊を差し出すのが喜びだった。",
+        talent: "じっくり物事を聞き届ける深い傾聴力",
+        weak: "自己主張が得意ではなく言いたいことを呑み込みがち",
+        menu: "HANZOの<br>えび天チリマヨ"
+      }
+    ];
+
+    window.onload = function() {
+      initBirthdateSelects();
+      generateRandomQuestions();
+    };
+
+    function initBirthdateSelects() {
+      const yearSelect = document.getElementById('birth-year');
+      const monthSelect = document.getElementById('birth-month');
+      const daySelect = document.getElementById('birth-day');
+
+      yearSelect.innerHTML = ''; monthSelect.innerHTML = ''; daySelect.innerHTML = '';
+
+      for (let y = 1940; y <= 2026; y++) {
+        const option = document.createElement('option');
+        option.value = y; option.text = y + "年";
+        if (y === 2000) option.selected = true;
+        yearSelect.appendChild(option);
+      }
+      for (let m = 1; m <= 12; m++) {
+        const option = document.createElement('option');
+        option.value = m; option.text = m + "月";
+        if (m === 1) option.selected = true;
+        monthSelect.appendChild(option);
+      }
+      for (let d = 1; d <= 31; d++) {
+        const option = document.createElement('option');
+        option.value = d; option.text = d + "日";
+        if (d === 1) option.selected = true;
+        daySelect.appendChild(option);
+      }
+    }
+
+    function generateRandomQuestions() {
+      const container = document.getElementById('random-questions-container');
+      container.innerHTML = '';
+
+      const shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+      const selectedQuestions = shuffled.slice(0, 4);
+      const numberPrefixes = ["②", "③", "④", "⑤"];
+
+      selectedQuestions.forEach((q, index) => {
+        const formGroup = document.createElement('div');
+        formGroup.className = 'form-group';
+
+        const label = document.createElement('label');
+        label.innerText = `${numberPrefixes[index]} ${q.text}`;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'select-wrapper';
+
+        const select = document.createElement('select');
+        select.className = 'random-q-select';
+
+        q.options.forEach((optText, optIndex) => {
+          const option = document.createElement('option');
+          option.value = optIndex + 1;
+          option.text = optText;
+          select.appendChild(option);
+        });
+
+        wrapper.appendChild(select);
+        formGroup.appendChild(label);
+        formGroup.appendChild(wrapper);
+        container.appendChild(formGroup);
+      });
+    }
+
+    function startTimeSlip() {
+      const quizScreen = document.getElementById('quiz-screen');
+      const videoScreen = document.getElementById('video-screen');
+      const video = document.getElementById('time-video');
+
+      quizScreen.classList.remove('active');
+      videoScreen.style.display = 'block';
+
+      video.currentTime = 0;
+      video.muted = true;
+      
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(error => {
+          console.error("動画再生エラー:", error);
+          videoScreen.style.display = 'none';
+          showResult();
+        });
+      }
+
+      video.onended = function() {
+        videoScreen.style.display = 'none';
+        showResult();
+      };
+    }
+
+    function showResult() {
+      const randomSelects = document.querySelectorAll('.random-q-select');
+      let randomScore = 0;
+      randomSelects.forEach(select => {
+        randomScore += parseInt(select.value);
+      });
+
+      const year = parseInt(document.getElementById('birth-year').value);
+      const month = parseInt(document.getElementById('birth-month').value);
+      const day = parseInt(document.getElementById('birth-day').value);
+      const birthNum = year + month + day;
+      
+      const totalScore = randomScore + birthNum;
+      const index = totalScore % results.length;
+      const res = results[index];
+
+      // 改行コード<br>を適用して出力
+      document.getElementById('res-img').src = res.img;
+      document.getElementById('res-title').innerHTML = res.title;
+      document.getElementById('res-story').innerHTML = res.story;
+      document.getElementById('res-talent').innerHTML = res.talent;
+      document.getElementById('res-weak').innerHTML = res.weak;
+      document.getElementById('res-menu').innerHTML = res.menu;
+
+      document.getElementById('result-screen').classList.add('active');
+    }
+
+    function resetQuiz() {
+      generateRandomQuestions();
+      document.getElementById('result-screen').classList.remove('active');
+      document.getElementById('quiz-screen').classList.add('active');
+    }
+  </script>
+</body>
+</html>
