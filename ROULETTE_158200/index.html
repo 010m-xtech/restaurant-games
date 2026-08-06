@@ -760,18 +760,39 @@
 
             state.players.forEach((p, index) => {
             const el = document.createElement('div');
-            el.className = "flex flex-col gap-2 bg-gradient-to-r from-[#1a0505] to-[#050505] p-3 rounded-xl border border-red-900/50 shadow-[0_5px_15px_rgba(0,0,0,0.8)] animate-[fadeIn_0.3s_ease-out]";
+            el.className = "flex flex-col gap-2 bg-gradient-to-r from-[#1a0505] to-[#050505] p-2 sm:p-3 rounded-xl border border-red-900/50 shadow-[0_5px_15px_rgba(0,0,0,0.8)] animate-[fadeIn_0.3s_ease-out]";
+            
+            // 文字数に応じてフォントサイズを動的に変更
+            let fontSizeClass = "text-sm sm:text-base";
+            if (p.name && p.name.length > 15) {
+                fontSizeClass = "text-[11px] sm:text-xs";
+            } else if (p.name && p.name.length > 10) {
+                fontSizeClass = "text-xs sm:text-sm";
+            }
             
             el.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="text-yellow-400 font-black text-2xl drop-shadow-[0_0_8px_rgba(255,215,0,1)] w-8 text-center shrink-0">${index + 1}</span>
-                    <input type="text" value="${p.name}" class="player-name-input flex-1 bg-[#0a0a0a] text-white font-bold px-3 py-2 rounded-lg border border-red-900/30 focus:border-yellow-500 focus:outline-none transition-colors shadow-inner placeholder-gray-500" placeholder="入力..." data-id="${p.id}"/>
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <span class="text-yellow-400 font-black text-xl sm:text-2xl drop-shadow-[0_0_8px_rgba(255,215,0,1)] w-6 sm:w-8 text-center shrink-0">${index + 1}</span>
+                    <input type="text" value="${p.name}" class="player-name-input flex-1 bg-[#0a0a0a] text-white font-bold ${fontSizeClass} px-2 sm:px-3 py-2 rounded-lg border border-red-900/30 focus:border-yellow-500 focus:outline-none transition-colors shadow-inner placeholder-gray-500" placeholder="入力..." data-id="${p.id}"/>
                 </div>
             `;
             DOM.playerList.appendChild(el);
         });
 
         document.querySelectorAll('.player-name-input').forEach(input => {
+                // 文字入力時にもリアルタイムでフォントサイズを調整
+                input.addEventListener('input', (e) => {
+                    const len = e.target.value.length;
+                    e.target.classList.remove('text-[11px]', 'sm:text-xs', 'text-xs', 'sm:text-sm', 'text-sm', 'sm:text-base');
+                    if (len > 15) {
+                        e.target.classList.add('text-[11px]', 'sm:text-xs');
+                    } else if (len > 10) {
+                        e.target.classList.add('text-xs', 'sm:text-sm');
+                    } else {
+                        e.target.classList.add('text-sm', 'sm:text-base');
+                    }
+                });
+
                 input.addEventListener('change', (e) => {
                     const player = state.players.find(p => p.id === parseInt(e.target.dataset.id));
                     if (player) player.name = e.target.value;
