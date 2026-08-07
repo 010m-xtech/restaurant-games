@@ -13,7 +13,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* --- 背景・エフェクト関連 --- */
+        /* 背景・洞窟エフェクト */
         .bg-cave {
             background-color: #1c1917;
             background-image: 
@@ -90,7 +90,7 @@
             }
         }
 
-        /* 回転する後光（サンバースト）エフェクト */
+        /* 回転するサンバーストエフェクト */
         .sunburst-bg {
             background: repeating-conic-gradient(
                 from 0deg,
@@ -191,13 +191,9 @@
         <!-- フェーズ4: 結果表示画面 (z-30) -->
         <div id="result-phase" class="absolute inset-0 bg-stone-950/95 backdrop-blur-md z-30 flex flex-col items-center justify-center p-6 text-center opacity-0 pointer-events-none transition-opacity duration-500 hidden overflow-y-auto">
             
-            <!-- 後光（サンバースト）エフェクト -->
             <div class="sunburst-bg absolute inset-0 z-0"></div>
-            
-            <!-- 紙吹雪用キャンバス -->
             <canvas id="confetti-canvas" class="absolute inset-0 w-full h-full z-10 pointer-events-none"></canvas>
 
-            <!-- ネオン風テキスト -->
             <h2 id="result-heading" class="text-2xl sm:text-4xl mb-4 animate-float neon-text-lucky tracking-wider relative z-20 leading-snug drop-shadow-lg"></h2>
             
             <div id="result-card" class="bg-gradient-to-br from-amber-50 to-orange-100 rounded-[2rem] p-4 shadow-[0_0_60px_rgba(255,215,0,0.6)] border-4 border-yellow-400 w-full max-w-sm mb-10 popup-enter relative overflow-hidden z-20">
@@ -205,17 +201,19 @@
                 <img id="result-image" src="" alt="おすすめメニュー" 
                      onerror="this.onerror=null; this.src='https://placehold.co/400x300/d97706/ffffff?text=MENU+IMAGE';" 
                      class="w-full h-auto rounded-xl object-contain drop-shadow-[0_5px_15px_rgba(0,0,0,0.3)] mb-4 border-2 border-orange-200/50 relative z-10">
+                
                 <!-- 結果テキスト表示エリア -->
-                <p id="result-text" class="text-lg sm:text-xl font-bold text-stone-800 leading-relaxed bg-white/90 p-4 rounded-xl shadow-inner backdrop-blur-sm border border-orange-200/50 relative z-10">
-                    <!-- ここにテキストが入ります -->
-                </p>
+                <div id="result-text-container" class="bg-white/90 px-3 py-3 rounded-xl shadow-inner backdrop-blur-sm border border-orange-200/50 relative z-10 text-center overflow-hidden">
+                    <span id="result-text" class="font-bold text-stone-800 whitespace-nowrap inline-block">
+                        <!-- ここにテキストが入ります -->
+                    </span>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
         // --- 設定値・定数 ---
-        // 結果データ（画像とテキスト）
         const RESULT_DATA = [
             {
                 img: 'bolognese.jpg',
@@ -266,7 +264,6 @@
                 img.onerror = checkDone;
                 img.src = data.img;
             });
-            // 画像読み込みの遅延・エラー対策（1秒後に強制的に準備完了）
             setTimeout(() => { imagesLoaded = true; }, 1000);
         }
 
@@ -292,7 +289,7 @@
             holeY = logicalHeight * 0.52; 
         }
 
-        // --- あみだくじ（レール）の生成 ---
+        // --- あみだくじの生成 ---
         function generateRungs() {
             rungs = [];
             const rungSpacing = 40; 
@@ -316,7 +313,7 @@
             addRungsInRegion(bottomRegionStart, bottomRegionEnd);
         }
 
-        // --- ルート計算ロジック ---
+        // --- ルート計算 ---
         function calculatePath(startColIndex) {
             pathCoords = [];
             let currentCol = startColIndex;
@@ -380,7 +377,7 @@
             return { x: pathCoords[pathCoords.length - 1].x, y: pathCoords[pathCoords.length - 1].y, angle: Math.PI/2 };
         }
 
-        // --- 描画ユーティリティ ---
+        // --- 描画関数 ---
         function fillRoundRect(ctx, x, y, width, height, radius) {
             ctx.beginPath();
             ctx.moveTo(x + radius, y);
@@ -411,7 +408,6 @@
             ctx.stroke();
         }
 
-        // --- オブジェクト描画群 ---
         function drawRollerCoasterTrack(ctx, x1, y1, x2, y2, isHighlighted) {
             const dx = x2 - x1, dy = y2 - y1;
             const len = Math.hypot(dx, dy);
@@ -572,7 +568,7 @@
             const t1 = getTransformAtDist(dist); drawBeerCar(ctx, t1.x, t1.y, t1.angle, true);
         }
 
-        // --- メインループ ---
+        // --- メインアニメーションループ ---
         function gameLoop(timestamp) {
             if (!lastTime) lastTime = timestamp;
             const deltaTime = timestamp - lastTime;
@@ -633,7 +629,7 @@
             }
         }
 
-        // --- ステート制御 ---
+        // --- ゲームフェーズ進行関数 ---
         function startGame(laneIndex) {
             if (state !== 'INIT') return;
 
@@ -707,7 +703,6 @@
                 
                 setTimeout(() => {
                      overlay.classList.remove('is-active');
-                     
                      state = 'PART2';
                      lastTime = 0; 
                 }, 100);
@@ -715,7 +710,7 @@
             }, 2000); 
         }
 
-        // 紙吹雪のアニメーションロジック
+        // 紙吹雪エフェクト
         function initConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             if (!canvas) return;
@@ -724,7 +719,6 @@
             canvas.height = window.innerHeight;
             confettiParticles = [];
             
-            // キラキラしたパーティカラー
             const colors = ['#fce18a', '#ffafcc', '#b9fbc0', '#a8e6cf', '#ff9a9e', '#ffd700'];
             
             for (let i = 0; i < 150; i++) {
@@ -764,7 +758,6 @@
                 ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
                 ctx.restore();
                 
-                // 画面下部に消えたら上から再出現させる
                 if (p.y > canvas.height) {
                     confettiParticles[index].x = Math.random() * canvas.width;
                     confettiParticles[index].y = -20;
@@ -781,6 +774,22 @@
             }
         }
 
+        // テキストの自動フォントサイズ計算 (1行収まり用)
+        function adjustTextFontSize() {
+            const container = document.getElementById('result-text-container');
+            const textEl = document.getElementById('result-text');
+            if (!container || !textEl) return;
+            
+            let fontSize = 18; // デフォルトサイズ
+            textEl.style.fontSize = fontSize + 'px';
+
+            const maxW = container.clientWidth - 16;
+            while (textEl.offsetWidth > maxW && fontSize > 10) {
+                fontSize -= 0.5;
+                textEl.style.fontSize = fontSize + 'px';
+            }
+        }
+
         function showResultPhase() {
             state = 'RESULT';
             
@@ -790,9 +799,8 @@
             
             const data = RESULT_DATA[finalResultCol];
             resultImg.src = data.img;
-            resultText.innerHTML = data.text; 
+            resultText.textContent = data.text; 
 
-            // 到達したレーン(0:左, 1:中, 2:右)に応じて見出しテキストを変更
             if (finalResultCol === 0) {
                 resultHeading.innerHTML = '大吉！！<br><span class="text-base sm:text-xl leading-relaxed mt-2 block">もっといい運勢にするには<br>下のメニューを食べてね！</span>';
             } else if (finalResultCol === 1) {
@@ -809,32 +817,13 @@
                 resultPhaseEl.classList.add('flex', 'opacity-100');
                 document.getElementById('result-card').classList.add('popup-enter-active');
 
-                // 当たり演出（紙吹雪）をスタート
+                // フォントサイズの即時計算
+                adjustTextFontSize();
+
                 setTimeout(() => {
                     initConfetti();
-                }, 300); // カードがポップアップしてから少し遅らせて開始
+                }, 300);
             }, 50);
-        }
-
-        function resetGame() {
-            try {
-                // 紙吹雪をストップ
-                stopConfetti();
-
-                const resultPhaseEl = document.getElementById('result-phase');
-                resultPhaseEl.classList.remove('opacity-100');
-                resultPhaseEl.classList.add('opacity-0', 'pointer-events-none');
-                document.getElementById('result-card').classList.remove('popup-enter-active');
-
-                setTimeout(() => {
-                    resultPhaseEl.classList.remove('flex');
-                    resultPhaseEl.classList.add('hidden');
-                    document.getElementById('buttons-container').style.opacity = '1';
-                    document.getElementById('buttons-container').style.pointerEvents = 'auto';
-
-                    initGame();
-                }, 500);
-            } catch (e) { console.error("Reset Error:", e); }
         }
 
         function initGame() {
@@ -858,7 +847,6 @@
             }
         }
 
-        // --- 起動・初期化処理 ---
         window.onload = () => {
             preloadGoalImages(); 
             setTimeout(initGame, 100);
@@ -866,10 +854,7 @@
             const video = document.getElementById('intro-video');
             const introPhase = document.getElementById('intro-phase');
 
-            // オープニング画面タップでスキップ可能にする
             introPhase.addEventListener('click', dismissIntro);
-
-            // 4秒経過しても動画が終わらない場合は自動でスキップ
             const introTimer = setTimeout(dismissIntro, 4000);
 
             video.addEventListener('ended', () => {
@@ -907,6 +892,8 @@
             if (state === 'INIT') {
                 setupLayout();
                 generateRungs();
+            } else if (state === 'RESULT') {
+                adjustTextFontSize();
             }
         });
     </script>
