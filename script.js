@@ -37,11 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
       "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
       "占い": "https://010m-xtech.github.io/restaurant-games/uranai_158200"
     },
-    "160070": {
-      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE_160070",
-      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_160070",
+    "159390": {
+      "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE_159390",
+      "あみだくじ": "https://010m-xtech.github.io/restaurant-games/amidakuji_159390",
       "クイズ": "https://010m-xtech.github.io/minigame/timeshock/",
-      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_160070"
+      "占い": "https://010m-xtech.github.io/restaurant-games/uranai_159390"
     },
     "406520": {
       "ルーレット": "https://010m-xtech.github.io/restaurant-games/ROULETTE_406520",
