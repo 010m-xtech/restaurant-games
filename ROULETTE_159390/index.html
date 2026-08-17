@@ -765,12 +765,56 @@
             DOM.playerList.appendChild(el);
         });
 
+        // テキスト入力時のフォントサイズ自動調整関数
+        const adjustFontSize = (input) => {
+            // 一旦デフォルトのフォントサイズとパディングをリセットして計算
+            input.style.fontSize = '16px'; 
+            
+            const value = input.value;
+            if (!value) return;
+
+            // ダミー要素を作成して実際のテキスト幅を測定
+            const dummy = document.createElement('span');
+            dummy.style.visibility = 'hidden';
+            dummy.style.position = 'absolute';
+            dummy.style.whiteSpace = 'pre';
+            dummy.style.fontFamily = window.getComputedStyle(input).fontFamily;
+            dummy.style.fontWeight = window.getComputedStyle(input).fontWeight;
+            dummy.style.fontSize = '16px'; // 基準サイズ
+            dummy.textContent = value;
+            document.body.appendChild(dummy);
+
+            const textWidth = dummy.offsetWidth;
+            const inputPadding = 24; // px-3 (12px * 2)
+            const availableWidth = input.clientWidth - inputPadding;
+
+            document.body.removeChild(dummy);
+
+            // テキスト幅が入力欄幅を超える場合、スケールダウン
+            if (textWidth > availableWidth && availableWidth > 0) {
+                const scale = availableWidth / textWidth;
+                const newSize = Math.max(10, Math.floor(16 * scale)); // 最小フォントサイズを10pxに制限
+                input.style.fontSize = `${newSize}px`;
+            }
+        };
+
         document.querySelectorAll('.player-name-input').forEach(input => {
+                // 初期表示時の調整
+                setTimeout(() => adjustFontSize(input), 0);
+
+                input.addEventListener('input', (e) => {
+                    adjustFontSize(e.target);
+                });
+
                 input.addEventListener('change', (e) => {
                     const player = state.players.find(p => p.id === parseInt(e.target.dataset.id));
                     if (player) player.name = e.target.value;
                     calculateSlices();
+                    adjustFontSize(e.target);
                 });
+                
+                // リサイズ時にも調整（念のため）
+                window.addEventListener('resize', () => adjustFontSize(input));
             });
         }
 
