@@ -11,6 +11,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 効果音再生用ライブラリ Tone.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
@@ -109,11 +110,11 @@
             box-shadow: inset 0 0 50px rgba(0,0,0,0.8);
         }
 
-        /* ▼▼▼ 画面割れ演出用CSS追加 ▼▼▼ */
+        /* 画面割れ演出用CSS */
         .blend-screen {
             mix-blend-mode: screen !important;
             pointer-events: none;
-            background: transparent !important; /* 透過を確実にするため追加 */
+            background: transparent !important;
         }
 
         @keyframes shake-impact {
@@ -126,9 +127,8 @@
         .impact-shake {
             animation: shake-impact 0.3s ease-out;
         }
-        /* ▲▲▲ 画面割れ演出用CSS追加 ▲▲▲ */
 
-        /* ▼▼▼ シネマティックタイトル用CSS追加 ▼▼▼ */
+        /* シネマティックタイトル用CSS */
         .title-cinematic {
             background: linear-gradient(180deg, #FFF2B2 0%, #FFDF00 35%, #D4AF37 50%, #B8860B 60%, #5c4300 100%);
             -webkit-background-clip: text;
@@ -147,7 +147,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* ▼▼▼ 結果表示用：シネマティックな黄金テキストと立体枠のCSS追加 ▼▼▼ */
+        /* 結果表示用：シネマティックな黄金テキストと立体枠のCSS */
         .text-cinematic-gold {
             background: linear-gradient(to bottom, #FFF2B2 0%, #D4AF37 35%, #5c4300 50%, #B8860B 60%, #FFDF73 100%);
             -webkit-background-clip: text;
@@ -182,7 +182,7 @@
             pointer-events: none;
         }
 
-        /* ▼▼▼ 逆転結果表示用CSS追加 ▼▼▼ */
+        /* 逆転結果表示用CSS */
         .text-cinematic-reverse {
             background: linear-gradient(to bottom, #ffb3b3 0%, #ff1a1a 35%, #800000 50%, #b30000 60%, #ff4d4d 100%);
             -webkit-background-clip: text;
@@ -226,8 +226,6 @@
             mask-composite: exclude;
             pointer-events: none;
         }
-        /* ▲▲▲ 逆転結果表示用CSS追加 ▲▲▲ */
-        /* ▲▲▲ 追加ここまで ▲▲▲ */
 
         .shadow-cinematic {
             filter: drop-shadow(0px 1px 0px #888)
@@ -245,9 +243,8 @@
                     drop-shadow(0px 3px 0px #000)
                     drop-shadow(0px 8px 15px rgba(0,0,0,0.9));
         }
-        /* ▲▲▲ シネマティックタイトル用CSS追加 ▲▲▲ */
 
-        /* ▼▼▼ サブタイトル（案内テキスト）用アニメーション ▼▼▼ */
+        /* サブタイトル（案内テキスト）用アニメーション */
         @keyframes elegantPulse {
             0%, 100% { opacity: 0.5; text-shadow: 0 0 5px rgba(255,255,255,0); }
             50% { opacity: 1; text-shadow: 0 0 10px rgba(255,255,255,0.4); }
@@ -255,7 +252,6 @@
         .animate-elegant-pulse {
             animation: elegantPulse 3s ease-in-out infinite;
         }
-        /* ▲▲▲ サブタイトル（案内テキスト）用アニメーション ▲▲▲ */
     </style>
 </head>
 <body class="h-[100dvh] w-full text-white font-sans overflow-hidden flex flex-col items-center relative">
@@ -275,45 +271,32 @@
                     </h1>
                 </div>
                 <p class="text-white font-bold tracking-widest text-sm md:text-base mb-3 drop-shadow-[0_2px_4px_rgba(0,0,0,1)]">
-                    なに食べる？だれが支払う？<br>今日の決め手はこれ！
+                    今日の決め手はこれ！
                 </p>
                 <p class="text-white font-medium tracking-[0.1em] text-xs md:text-sm drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] animate-elegant-pulse ml-[0.1em]">
                     お題と選択肢の数を決定してください
                 </p>
             </div>
 
-        <div class="w-full mb-6 shrink-0 z-20">
-            <label class="block text-gray-300 font-bold text-xs mb-2 pl-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-widest">お題</label>
-            <div class="relative">
-                <select id="theme-select" required class="w-full bg-black/80 border border-yellow-700/50 rounded-xl px-4 py-3 text-white font-bold appearance-none focus:outline-none focus:border-yellow-400 transition-colors shadow-[inset_0_2px_10px_rgba(0,0,0,1)] text-sm md:text-base cursor-pointer invalid:text-gray-500">
-                    <option value="" disabled selected hidden>お題を決定してください</option>
-                    <option value="フードを決める" class="text-white">フードを決める</option>
-                    <option value="支払う人を決める" class="text-white">支払う人を決める</option>
-                    <option value="custom" class="text-white">自由に作る</option>
-                </select>
-                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-yellow-600">
-                    <svg class="fill-current h-4 w-4 drop-shadow-[0_0_2px_rgba(255,215,0,0.8)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+            <div class="w-full mb-6 shrink-0 z-20">
+                <label class="block text-gray-300 font-bold text-xs mb-2 pl-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] tracking-widest">お題</label>
+                <input type="text" id="theme-input" placeholder="お題を入力..." class="w-full bg-black/80 border border-yellow-700/50 rounded-xl px-4 py-3 text-white font-bold placeholder-gray-600 focus:outline-none focus:border-yellow-400 transition-colors shadow-[inset_0_2px_10px_rgba(0,0,0,1)] text-sm md:text-base" />
+            </div>
+
+            <div class="flex items-center justify-between bg-black/80 border border-yellow-700/50 rounded-xl px-3 py-2 mb-4 shrink-0 shadow-[inset_0_2px_10px_rgba(0,0,0,1)]">
+                <span class="text-gray-300 font-bold tracking-wider text-[11px] sm:text-sm ml-[0.1em]">選択肢の数を決定してください</span>
+                <div class="flex items-center gap-3">
+                    <button id="decrease-players-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-900 text-yellow-600 hover:bg-gray-800 hover:text-yellow-400 border border-yellow-700/30 transition-colors active:scale-95 disabled:opacity-50 disabled:grayscale">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                    </button>
+                    <span id="player-count-display" class="text-2xl font-black text-white w-8 text-center drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">2</span>
+                    <button id="increase-players-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-900 text-yellow-600 hover:bg-gray-800 hover:text-yellow-400 border border-yellow-700/30 transition-colors active:scale-95 disabled:opacity-50 disabled:grayscale">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
+                    </button>
                 </div>
             </div>
-            <div id="custom-theme-container" class="mt-3 hidden">
-                <input type="text" id="custom-theme-input" placeholder="お題を入力..." class="w-full bg-[#0a0a0a] border border-yellow-700/50 rounded-xl px-4 py-3 text-white font-bold placeholder-gray-600 focus:outline-none focus:border-yellow-400 transition-colors shadow-inner text-sm md:text-base" />
-            </div>
-        </div>
 
-        <div class="flex items-center justify-between bg-black/80 border border-yellow-700/50 rounded-xl px-3 py-2 mb-4 shrink-0 shadow-[inset_0_2px_10px_rgba(0,0,0,1)]">
-            <span class="text-gray-300 font-bold tracking-wider text-[11px] sm:text-sm ml-[0.1em]">選択肢の数を決定してください</span>
-            <div class="flex items-center gap-3">
-                <button id="decrease-players-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-900 text-yellow-600 hover:bg-gray-800 hover:text-yellow-400 border border-yellow-700/30 transition-colors active:scale-95 disabled:opacity-50 disabled:grayscale">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/></svg>
-                </button>
-                <span id="player-count-display" class="text-2xl font-black text-white w-8 text-center drop-shadow-[0_0_8px_rgba(255,255,255,0.5)]">2</span>
-                <button id="increase-players-btn" class="w-10 h-10 flex items-center justify-center rounded-lg bg-gray-900 text-yellow-600 hover:bg-gray-800 hover:text-yellow-400 border border-yellow-700/30 transition-colors active:scale-95 disabled:opacity-50 disabled:grayscale">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>
-                </button>
-            </div>
-        </div>
-
-        <div id="player-list" class="flex-1 overflow-y-auto space-y-3 pb-28 scrollbar-hide"></div>
+            <div id="player-list" class="flex-1 overflow-y-auto space-y-3 pb-28 scrollbar-hide"></div>
             <div class="absolute bottom-6 left-6 right-6 z-20">
                 <button 
                     id="enter-room-btn"
@@ -334,7 +317,7 @@
             <button id="back-btn" class="text-gray-500 hover:text-white text-sm font-bold tracking-wider flex items-center transition-colors drop-shadow-[0_2px_4px_rgba(0,0,0,1)] w-16 md:w-20 z-20 mt-2">
                 ◀ BACK
             </button>
-            <!-- タイトルを廃止し、右上の空間をDEVモードの隠しスイッチに設定 -->
+            <!-- 開発モードスイッチ -->
             <div id="dev-toggle-btn" class="w-24 h-12 relative flex justify-end z-20 mt-2 cursor-pointer ml-auto">
                 <span id="dev-indicator" class="hidden text-[10px] text-red-500 font-bold animate-pulse absolute top-1 right-0 whitespace-nowrap drop-shadow-[0_0_5px_rgba(255,0,0,1)]">DEV: ON</span>
             </div>
@@ -488,7 +471,7 @@
                             </filter>
                         </defs>
                         
-                        <!-- 玉の演出（iPhone用にdrop-shadow属性の複数指定を廃止し、擬似影を追加） -->
+                        <!-- 玉の演出 -->
                         <g id="ball-group" class="ball-idle">
                             <!-- 落ちる影 -->
                             <ellipse cx="500" cy="130" rx="30" ry="15" fill="rgba(0,0,0,0.8)" filter="url(#ios-blur-md)" />
@@ -532,12 +515,12 @@
         </div>
     </div>
 
-    <!-- MAIN CUTIN OVERLAY FOR NORMAL VIDEOS (muted削除) -->
+    <!-- MAIN CUTIN OVERLAY FOR NORMAL VIDEOS -->
     <div id="cutin-overlay" class="fixed inset-0 z-[60] bg-black flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
         <video id="cutin-video" playsinline class="absolute inset-0 w-full h-full object-contain transition-opacity duration-300" muted></video>
     </div>
 
-    <!-- SEPARATE OVERLAY FOR SCREEN BLEND (PARIN.MP4) (muted削除) -->
+    <!-- SEPARATE OVERLAY FOR SCREEN BLEND (PARIN.MP4) -->
     <div id="cutin-blend-overlay" class="fixed inset-0 z-[70] bg-transparent flex items-center justify-center hidden opacity-0 transition-opacity duration-300 blend-screen">
         <video id="cutin-blend-video" playsinline class="absolute inset-0 w-full h-full object-contain" muted></video>
     </div>
@@ -553,7 +536,7 @@
                 DANGER!!
             </div>
             <div class="text-white bg-black/80 px-6 py-2 rounded-full border border-red-500 font-bold text-xl">
-                // TODO: 復活演出動画再生中...
+                // 復活演出動画再生中...
             </div>
         </div>
     </div>
@@ -593,22 +576,10 @@
             'url(#black-metal)'
         ];
 
-        const FOOD_CANDIDATES = [
-            'マーラーフライドチキン',
-            'マーラー麺',
-            'マーラー痺れ麻婆豆腐',
-            '極　焼き餃子',
-            'クリームチーズの紹興酒漬け',
-            '大地チャーハン',
-            '台湾ニラもやし',
-            '揚げ餃子'
-        ];
-
         let state = {
             phase: 'setup',
             gameState: 'idle',
             theme: '',
-            customTheme: '',
             players: [
                 { id: 1, name: '', penalties: 0 },
                 { id: 2, name: '', penalties: 0 }
@@ -634,9 +605,7 @@
             increasePlayersBtn: document.getElementById('increase-players-btn'),
             playerCountDisplay: document.getElementById('player-count-display'),
             
-            themeSelect: document.getElementById('theme-select'),
-            customThemeContainer: document.getElementById('custom-theme-container'),
-            customThemeInput: document.getElementById('custom-theme-input'),
+            themeInput: document.getElementById('theme-input'),
             
             playerList: document.getElementById('player-list'),
             enterRoomBtn: document.getElementById('enter-room-btn'),
@@ -671,47 +640,18 @@
         DOM.bgmAudio.muted = true;
         DOM.bgmAudio.volume = 0;
 
-        // BGMのシームレスループ処理（遅延軽減のため終了直前に先頭に戻す）
+        // BGMのシームレスループ処理
         DOM.bgmAudio.addEventListener('timeupdate', function() {
-            const buffer = 0.15; // 終了0.15秒前に先頭に戻す
+            const buffer = 0.15;
             if (this.duration && this.currentTime >= this.duration - buffer) {
                 this.currentTime = 0;
-                this.play().catch(e => {}); // 再生を確実に行う
+                this.play().catch(e => {});
             }
         });
 
         // Tone.jsの効果音再生関数
         function playSound(type) {
-            // 完全にミュートするため早期リターン
             return;
-            
-            // Tone.jsが起動していなければ無視
-            if (Tone.context.state !== 'running') return;
-            
-            const synth = new Tone.Synth().toDestination();
-            switch(type) {
-                case 'add':
-                    synth.triggerAttackRelease("C5", "16n");
-                    break;
-                case 'remove':
-                    synth.triggerAttackRelease("G4", "16n");
-                    break;
-                case 'next':
-                    synth.triggerAttackRelease("E5", "8n");
-                    break;
-                case 'back':
-                    synth.triggerAttackRelease("C4", "8n");
-                    break;
-                case 'spin':
-                    // ルーレットの回転をイメージしたノイズ音
-                    const noise = new Tone.NoiseSynth({
-                        noise: { type: 'pink' },
-                        envelope: { attack: 0.01, decay: 0.1 }
-                    }).toDestination();
-                    noise.volume.value = -10;
-                    noise.triggerAttackRelease("16n");
-                    break;
-            }
         }
 
         function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
@@ -734,16 +674,6 @@
             ].join(" ");
         }
 
-        const icons = {
-            trash: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`,
-            skull: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500/80 drop-shadow-[0_0_5px_rgba(255,0,0,0.5)]"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"/></svg>`,
-            skullRed: `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-600 mx-auto drop-shadow-[0_0_30px_rgba(255,0,0,1)]"><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><path d="M8 20v2h8v-2"/><path d="m12.5 17-.5-1-.5 1h1z"/><path d="M16 20a2 2 0 0 0 1.56-3.25 8 8 0 1 0-11.12 0A2 2 0 0 0 8 20"/></svg>`,
-            minus: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" x2="19" y1="12" y2="12"/></svg>`,
-            plus: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" x2="12" y1="5" y2="19"/><line x1="5" x2="19" y1="12" y2="12"/></svg>`,
-            zap: `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="url(#zapGrad)" stroke="#cceeff" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round" class="mx-auto drop-shadow-[0_0_30px_rgba(0,150,255,1)] drop-shadow-[0_5px_10px_rgba(0,0,0,0.8)] animate-pulse"><defs><linearGradient id="zapGrad" x1="0%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#ffffff"/><stop offset="30%" stop-color="#00aaff"/><stop offset="100%" stop-color="#001155"/></linearGradient></defs><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-            flame: `<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="absolute -bottom-4 -right-4 text-red-900/30"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`
-        };
-
         function renderSetupView() {
             DOM.playerList.innerHTML = '';
             DOM.enterRoomBtn.disabled = state.players.length < 2;
@@ -753,27 +683,25 @@
             DOM.increasePlayersBtn.disabled = state.players.length >= 20;
 
             state.players.forEach((p, index) => {
-            const el = document.createElement('div');
-            el.className = "flex flex-col gap-2 bg-gradient-to-r from-[#1a0505] to-[#050505] p-3 rounded-xl border border-red-900/50 shadow-[0_5px_15px_rgba(0,0,0,0.8)] animate-[fadeIn_0.3s_ease-out]";
-            
-            // 文字数に応じたフォントサイズの自動調整
-            let fontSizeClass = 'text-base';
-            if (p.name.length >= 13) fontSizeClass = 'text-[10px] sm:text-xs';
-            else if (p.name.length >= 10) fontSizeClass = 'text-xs sm:text-sm';
-            else if (p.name.length >= 7) fontSizeClass = 'text-sm sm:text-base';
+                const el = document.createElement('div');
+                el.className = "flex flex-col gap-2 bg-gradient-to-r from-[#1a0505] to-[#050505] p-3 rounded-xl border border-red-900/50 shadow-[0_5px_15px_rgba(0,0,0,0.8)] animate-[fadeIn_0.3s_ease-out]";
+                
+                let fontSizeClass = 'text-base';
+                if (p.name.length >= 13) fontSizeClass = 'text-[10px] sm:text-xs';
+                else if (p.name.length >= 10) fontSizeClass = 'text-xs sm:text-sm';
+                else if (p.name.length >= 7) fontSizeClass = 'text-sm sm:text-base';
 
-            el.innerHTML = `
-                <div class="flex items-center gap-3">
-                    <span class="text-yellow-400 font-black text-2xl drop-shadow-[0_0_8px_rgba(255,215,0,1)] w-8 text-center shrink-0">${index + 1}</span>
-                    <input type="text" value="${p.name}" class="player-name-input flex-1 bg-[#0a0a0a] text-white font-bold px-3 py-2 rounded-lg border border-red-900/30 focus:border-yellow-500 focus:outline-none transition-colors shadow-inner placeholder-gray-500 ${fontSizeClass}" placeholder="入力..." data-id="${p.id}"/>
-                </div>
-            `;
-            DOM.playerList.appendChild(el);
-        });
+                el.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-yellow-400 font-black text-2xl drop-shadow-[0_0_8px_rgba(255,215,0,1)] w-8 text-center shrink-0">${index + 1}</span>
+                        <input type="text" value="${p.name}" class="player-name-input flex-1 bg-[#0a0a0a] text-white font-bold px-3 py-2 rounded-lg border border-red-900/30 focus:border-yellow-500 focus:outline-none transition-colors shadow-inner placeholder-gray-500 ${fontSizeClass}" placeholder="入力..." data-id="${p.id}"/>
+                    </div>
+                `;
+                DOM.playerList.appendChild(el);
+            });
 
-        document.querySelectorAll('.player-name-input').forEach(input => {
+            document.querySelectorAll('.player-name-input').forEach(input => {
                 input.addEventListener('input', (e) => {
-                    // 入力中もリアルタイムにフォントサイズを調整し、1行で表示できるようにする
                     const val = e.target.value;
                     e.target.classList.remove('text-base', 'text-sm', 'sm:text-base', 'text-xs', 'sm:text-sm', 'text-[10px]', 'sm:text-xs');
                     if (val.length >= 13) e.target.classList.add('text-[10px]', 'sm:text-xs');
@@ -846,15 +774,7 @@
                     const seq = finalSequence[i];
                     const playerIndex = state.players.findIndex(p => p.id === seq.player.id) + 1;
                     
-                    // 盤面表示用の短縮名を判定
                     let displayLabel = seq.player.name || `Player ${playerIndex}`;
-                    // フード用
-                    if (displayLabel === 'マーラーフライドチキン') displayLabel = 'フライドチキン';
-                    if (displayLabel === 'マーラー痺れ麻婆豆腐') displayLabel = '麻婆豆腐';
-                    if (displayLabel === '極　焼き餃子') displayLabel = '焼き餃子';
-                    if (displayLabel === 'クリームチーズの紹興酒漬け') displayLabel = 'クリームチーズ';
-                    if (displayLabel === '大地チャーハン') displayLabel = 'チャーハン';
-                    if (displayLabel === '台湾ニラもやし') displayLabel = 'ニラもやし';
 
                     newSlices.push({
                         type: 'player',
@@ -971,15 +891,14 @@
                         if (state.gameState === 'spinning' || state.gameState === 'fake_stopped') {
                             DOM.ballGroup.classList.remove('ball-idle');
                             DOM.ballGroup.classList.add('ball-active');
-                            playSound('spin'); // スピン音
+                            playSound('spin');
                         }
                     }, 1000);
                 } else if (newState === 'reverse_spinning') {
-                    playSound('spin'); // 逆回転時にもスピン音を鳴らす場合
+                    playSound('spin');
                 }
             }
 
-            // Effects
             if (newState === 'blackout' || newState === 'reverse_spinning') {
                 DOM.blackoutOverlay.classList.remove('hidden');
                 void DOM.blackoutOverlay.offsetWidth;
@@ -1007,7 +926,6 @@
 
             if (newState === 'result') {
                 showResultModal();
-                // 逆転演出が確定している場合、1回目の結果発表と同時にBGMを停止（違和感の演出）
                 if (state.willReverse) {
                     DOM.bgmAudio.pause();
                 }
@@ -1035,11 +953,9 @@
             }
         }
 
-        // アイコンを削除し、テキストのみを表示するように修正
         function showResultModal() {
             let html = '';
             
-            // テキストの文字数に応じてフォントサイズを動的に決定する関数
             const getDynamicTextClass = (text) => {
                 if (!text) return 'text-4xl md:text-5xl';
                 const len = text.length;
@@ -1107,11 +1023,10 @@
             DOM.resultOverlay.classList.remove('opacity-0');
             DOM.resultModal.classList.remove('translate-y-12', 'scale-90');
 
-            // === テキストが親要素より大きい場合、必ず1行に収まるように自動縮小する ===
             setTimeout(() => {
                 const autoFitTexts = DOM.resultContent.querySelectorAll('.auto-fit-text');
                 autoFitTexts.forEach(el => {
-                    el.style.transform = 'none'; // リセット
+                    el.style.transform = 'none';
                     const parentWidth = el.parentElement.clientWidth;
                     const elWidth = el.scrollWidth;
                     
@@ -1136,7 +1051,7 @@
             
             const rollingReflection = document.getElementById('rolling-reflection');
             if (rollingReflection) {
-                const rollDeg = ballDeg * (400 / 16); // 軌道半径400に合わせて自転速度を調整
+                const rollDeg = ballDeg * (400 / 16);
                 rollingReflection.style.transition = `transform ${durationMs}ms ${ballEase}`;
                 rollingReflection.style.transform = `rotateZ(${rollDeg}deg)`;
             }
@@ -1146,15 +1061,13 @@
         function showResult() {
             updateGameState('result');
             
-            // 結果表示の1.5秒後に、事前の抽選結果(willReverse)に基づいて複雑な逆転シーケンスを開始
             setTimeout(() => {
                 if (state.gameState === 'result' && state.willReverse) {
                     
-                    // 共通の動画再生ヘルパー
                     const playVideo = (src, onEnded) => {
                         DOM.cutinVideo.onended = null;
                         DOM.cutinVideo.pause();
-                        DOM.cutinVideo.classList.remove('opacity-0'); // 次の動画用に透明度をリセット
+                        DOM.cutinVideo.classList.remove('opacity-0');
                         
                         setTimeout(() => {
                             DOM.cutinVideo.src = src;
@@ -1177,7 +1090,6 @@
                                 playPromise.catch(e => {
                                     console.log(`Video play error (${src}):`, e);
                                     DOM.cutinVideo.removeEventListener('playing', onPlaying);
-                                    // エラー時でも強制的に次の処理へ進める
                                     if (onEnded) onEnded();
                                 });
                             }
@@ -1211,34 +1123,20 @@
                         }, 100);
                     };
                     
-                    // === 変更後の逆転動画シーケンス実行 ===
-                    // 逆転演出中はBGMを一時停止
                     DOM.bgmAudio.pause();
 
-                    // 1. ptn2.mp4 を再生
                     playVideo('ptn2.mp4', () => {
-                        // 2. 終了直後、zwzw2.mp4 を再生
                         playVideo('zwzw2.mp4', () => {
-                            // 3. zwzw2.mp4 終了0.5秒後、chaos.mp4 を再生
                             setTimeout(() => {
                                 playVideo('chaos.mp4', () => {
-                                    // 4. chaos.mp4 終了後 (フェードアウトは timeupdate で完了済み)
-                                    
-                                    // 5. 1秒後（1000ms）に1回目の結果を表示したまま画面割れを再生し、終了後に結果を書き換える
                                     setTimeout(() => {
-                                        // 黒背景のオーバーレイを消して盤面(1回目の結果)を見せる
                                         DOM.cutinOverlay.classList.add('hidden');
-                                        // 次の再生のために動画の透明度を元に戻しておく
                                         DOM.cutinVideo.classList.remove('opacity-0');
 
-                                        // 割れる瞬間の衝撃
                                         DOM.resultModal.classList.add('impact-shake');
                                         setTimeout(() => DOM.resultModal.classList.remove('impact-shake'), 300);
 
-                                        // 画面割れ（パリン）演出を再生
                                         playParinSequence(() => {
-                                            // --- 画面割れ演出終了後 ---
-                                            // ここで結果を「1回目以外」に書き換える
                                             state.hasReversed = true;
                                             
                                             const otherSlices = state.slices.filter(s => {
@@ -1263,7 +1161,6 @@
                                                     state.victim = others[Math.floor(Math.random() * others.length)] || fakeTargetPlayer;
                                                 }
 
-                                                // 盤面の角度を即座に変更
                                                 DOM.wheelLayer.style.transition = 'none';
                                                 const midAngle = (newSlice.startAngle + newSlice.endAngle) / 2;
                                                 const targetMod = (270 - midAngle + 360) % 360;
@@ -1273,19 +1170,16 @@
                                                 DOM.wheelLayer.style.transform = `rotateZ(${targetRotation}deg)`;
                                                 state.rotation = targetRotation;
 
-                                                // 新しい結果を表示して揺らす
                                                 showResultModal();
                                                 DOM.resultModal.classList.add('impact-shake');
                                                 setTimeout(() => DOM.resultModal.classList.remove('impact-shake'), 300);
 
-                                                // 逆転演出終了後、BGMを再開
                                                 DOM.bgmAudio.play().catch(e => console.log('BGM Play Error:', e));
                                             }
                                         });
-                                    }, 1000); // 1秒間真っ暗な画面を維持
+                                    }, 1000);
                                 });
 
-                                // chaos.mp4 の終わり 0.3秒前 にフェードアウトを開始して自然に真っ黒にする
                                 const fadeOutHandler = function() {
                                     if (this.duration && this.currentTime >= this.duration - 0.3) {
                                         this.classList.add('opacity-0');
@@ -1294,7 +1188,7 @@
                                 };
                                 DOM.cutinVideo.addEventListener('timeupdate', fadeOutHandler);
 
-                            }, 500); // zwzw2.mp4終了から0.5秒待機
+                            }, 500);
                         });
                     });
                 }
@@ -1306,7 +1200,6 @@
             
             updateGameState('spinning');
 
-            // スピン開始時点で逆転演出の有無を抽選 (通常は50%、デバッグモード時は100%)
             if (state.forceCounter) {
                 state.willReverse = true;
             } else {
@@ -1314,7 +1207,6 @@
             }
             state.hasReversed = false;
 
-            // 1.5秒後に Roulette1.mp4 再生
             state.cutinTimeoutId = setTimeout(() => {
                 if (state.gameState === 'spinning') {
                     DOM.cutinOverlay.classList.remove('hidden');
@@ -1323,7 +1215,7 @@
                     
                     DOM.cutinVideo.onended = null;
                     DOM.cutinVideo.pause();
-                    DOM.cutinVideo.classList.remove('opacity-0'); // 透明度をリセット
+                    DOM.cutinVideo.classList.remove('opacity-0');
                     
                     DOM.cutinVideo.src = 'Roulette1.mp4';
                     DOM.cutinVideo.load();
@@ -1341,7 +1233,6 @@
                             }
                         }, 300);
 
-                        // 逆転演出なしパターンの場合、Roulette1.mp4終了から1.7秒後にRoulette3.mp4を再生
                         if (!state.willReverse && state.gameState === 'spinning') {
                             setTimeout(() => {
                                 if (state.gameState === 'spinning') {
@@ -1351,7 +1242,7 @@
                                     
                                     DOM.cutinVideo.onended = null;
                                     DOM.cutinVideo.pause();
-                                    DOM.cutinVideo.classList.remove('opacity-0'); // 透明度をリセット
+                                    DOM.cutinVideo.classList.remove('opacity-0');
                                     
                                     DOM.cutinVideo.src = 'Roulette3.mp4';
                                     DOM.cutinVideo.load();
@@ -1481,26 +1372,13 @@
 
         DOM.increasePlayersBtn.addEventListener('click', () => {
             if (state.players.length < 20) {
-                let newName = '';
-                const currentNames = state.players.map(p => p.name);
-                
-                // モードに応じて未使用のメニューを順番に追加する
-                if (state.theme === 'フードを決める') {
-                    const availableFoods = FOOD_CANDIDATES.filter(food => !currentNames.includes(food));
-                    if (availableFoods.length > 0) {
-                        // ランダムではなく、未追加の最初の要素を選択
-                        newName = availableFoods[0];
-                    }
-                }
-                
-                state.players.push({ id: Date.now(), name: newName, penalties: 0 });
+                state.players.push({ id: Date.now(), name: '', penalties: 0 });
                 renderSetupView();
                 calculateSlices();
             }
         });
 
         DOM.enterRoomBtn.addEventListener('click', () => {
-            // Web Audio API と 全体BGM の再生を開始
             if (Tone.context.state !== 'running') Tone.start();
             DOM.bgmAudio.play().catch(e => console.log('BGM Play Error:', e));
             
@@ -1524,14 +1402,12 @@
             playSound('back');
             updateGameState('idle');
             setAppPhase('setup');
-            // BGMが止まっていた場合は再開
             DOM.bgmAudio.play().catch(e => console.log('BGM Play Error:', e));
         });
 
         DOM.nextRoundBtn.addEventListener('click', () => {
             playSound('next');
             updateGameState('idle');
-            // 次のラウンドに向けてBGMを再開
             DOM.bgmAudio.play().catch(e => console.log('BGM Play Error:', e));
         });
 
@@ -1539,40 +1415,8 @@
         style.innerHTML = `@keyframes fadeIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }`;
         document.head.appendChild(style);
 
-        DOM.themeSelect.addEventListener('change', (e) => {
-            const value = e.target.value;
-            if (value === 'custom') {
-                DOM.customThemeContainer.classList.remove('hidden');
-            } else {
-                DOM.customThemeContainer.classList.add('hidden');
-                state.theme = value;
-            }
-            
-            // 「フードを決める」が選択された場合の強制設定
-            if (value === 'フードを決める') {
-                // 上位6項目を固定で抽出
-                const selectedFoods = FOOD_CANDIDATES.slice(0, 6);
-                
-                state.players = selectedFoods.map((name, index) => ({
-                    id: index + 1,
-                    name: name,
-                    penalties: 0
-                }));
-            } else {
-                // それ以外が選択された場合は初期状態(2つの空枠)にリセット
-                state.players = [
-                    { id: 1, name: '', penalties: 0 },
-                    { id: 2, name: '', penalties: 0 }
-                ];
-            }
-            
-            // 画面とルーレット盤面を更新
-            renderSetupView();
-            calculateSlices();
-        });
-
-        DOM.customThemeInput.addEventListener('input', (e) => {
-            state.customTheme = e.target.value;
+        DOM.themeInput.addEventListener('input', (e) => {
+            state.theme = e.target.value;
         });
 
         renderSetupView();
