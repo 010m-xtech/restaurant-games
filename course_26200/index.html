@@ -243,7 +243,7 @@
         <div class="absolute inset-0 bg-black/60 z-0"></div> <!-- 暗くするフィルター -->
         <div class="text-center pb-20 relative z-10 bg-white p-8 rounded-2xl shadow-2xl">
             <img src="hukuro.webp" alt="ふくろう" class="w-24 h-24 mx-auto mb-6 bounce object-contain">
-            <h2 id="loading-title" class="text-xl font-black text-gray-800 mb-3">あなたにピッタリの宴会を準備中...</h2>
+            <h2 id="loading-title" class="text-xl font-black text-gray-800 mb-3">あなたにピッタリの宴会を<br>準備中...</h2>
             <p id="loading-subtitle" class="text-sm text-gray-500 font-bold">幹事さん、いつもお疲れ様です！</p>
         </div>
     </div>
@@ -441,7 +441,7 @@
         // ローディングを挟んで結果へ
         function processResult(resultId) {
             // 通常の診断用テキストに設定
-            document.getElementById('loading-title').innerText = 'あなたにピッタリの宴会を準備中...';
+            document.getElementById('loading-title').innerHTML = 'あなたにピッタリの宴会を<br>準備中...';
             document.getElementById('loading-subtitle').innerText = '幹事さん、いつもお疲れ様です！';
 
             showScreen('screen-loading');
