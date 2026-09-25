@@ -539,6 +539,19 @@
             const btn = document.getElementById('start-btn-area');
 
             let currentCursor = null;
+            let isSkipped = false;
+            let currentSleepResolver = null;
+
+            // 画面タップでアニメーションをスキップ
+            function skipAnimation() {
+                if (isSkipped) return;
+                isSkipped = true;
+                if (currentSleepResolver) currentSleepResolver(); // 待機中なら即座に解除
+                document.body.removeEventListener('click', skipAnimation);
+                document.body.removeEventListener('touchstart', skipAnimation);
+            }
+            document.body.addEventListener('click', skipAnimation);
+            document.body.addEventListener('touchstart', skipAnimation, { passive: true });
 
             function removeCursor() {
                 if (currentCursor) {
@@ -555,13 +568,47 @@
             }
 
             function sleep(ms) {
-                return new Promise(resolve => setTimeout(resolve, ms));
+                if (isSkipped) return Promise.resolve();
+                return new Promise(resolve => {
+                    const timer = setTimeout(() => {
+                        currentSleepResolver = null;
+                        resolve();
+                    }, ms);
+                    // スキップされた時に即座に解決できるように保存
+                    currentSleepResolver = () => {
+                        clearTimeout(timer);
+                        resolve();
+                    };
+                });
+            }
+
+            // 最終状態をパッと表示するヘルパー関数
+            function renderFinalText(el, steps) {
+                el.innerHTML = ''; // 中身をリセット
+                steps.forEach(step => {
+                    if (step.br) {
+                        el.appendChild(document.createElement('br'));
+                    } else {
+                        const span = document.createElement('span');
+                        span.textContent = step.k;
+                        if (step.cls) {
+                            span.className = step.cls;
+                        }
+                        el.appendChild(span);
+                    }
+                });
             }
 
             // スクリプトに従って順次入力・変換アニメーションを実行
             for (const line of typeScript) {
                 const el = document.getElementById(line.target);
                 if (!el) continue;
+
+                if (isSkipped) {
+                    renderFinalText(el, line.steps);
+                    continue; // 次のテキスト行へ
+                }
+
                 appendCursor(el);
                 
                 // アニメーション速度の設定
@@ -571,6 +618,8 @@
                 const waitAfterConvert = 100; // 確定後のタメ
 
                 for (const step of line.steps) {
+                    if (isSkipped) break; // スキップされたらループを抜ける
+
                     if (step.br) {
                         const br = document.createElement('br');
                         el.insertBefore(br, currentCursor);
@@ -588,14 +637,18 @@
 
                     // ひらがなを1文字ずつタイピング
                     for (let i = 0; i < step.h.length; i++) {
+                        if (isSkipped) break;
                         currentCursor.classList.add('typing');
                         unconvSpan.textContent += step.h[i];
                         await sleep(typeBaseSpeed + Math.random() * typeRandomSpeed); 
                         currentCursor.classList.remove('typing');
                     }
 
+                    if (isSkipped) break;
+
                     // 変換キー（スペースキー）を押す前の一瞬のタメ
                     await sleep(waitBeforeConvert);
+                    if (isSkipped) break;
 
                     // 漢字に変換（下線が消え、文字が置き換わる）
                     unconvSpan.classList.remove('unconverted');
@@ -605,9 +658,14 @@
                     await sleep(waitAfterConvert);
                 }
 
-                // 指定された文章の終わりのタメ（2秒や1.5秒など）
-                await sleep(line.delayAfter);
-                removeCursor();
+                if (isSkipped) {
+                    removeCursor();
+                    renderFinalText(el, line.steps);
+                } else {
+                    // 指定された文章の終わりのタメ
+                    await sleep(line.delayAfter);
+                    removeCursor();
+                }
             }
 
             // 全て完了したら残りの要素を順番に表示
@@ -615,12 +673,12 @@
                 introBox.classList.remove('initial-hide');
                 introBox.classList.add('fade-in');
             }
-            await sleep(400);
+            if (!isSkipped) await sleep(400);
             if (appeal) {
                 appeal.classList.remove('initial-hide');
                 appeal.classList.add('fade-in');
             }
-            await sleep(400);
+            if (!isSkipped) await sleep(400);
             if (btn) {
                 btn.classList.remove('initial-hide');
                 btn.classList.add('fade-in');
