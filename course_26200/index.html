@@ -61,6 +61,10 @@
             border-bottom: 2px solid currentColor;
             padding-bottom: 1px;
         }
+        .text-stroke-black {
+            -webkit-text-stroke: 1.5px black;
+            paint-order: stroke fill; /* 文字の内側が潰れないように外側に縁取りを広げる */
+        }
     </style>
 </head>
 <body class="bg-pattern min-h-screen">
@@ -72,13 +76,13 @@
         <!-- メインビジュアル -->
         <header class="w-full relative">
             <img src="gaikan.webp" alt="宴会イメージ" class="w-full h-72 md:h-80 object-cover">
-            <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center p-4">
+            <div class="absolute inset-0 bg-black/60 flex flex-col items-center justify-center p-4">
                 <div id="typewriter-area" class="text-center space-y-6">
                     <h1 class="text-white font-black drop-shadow-lg leading-tight">
                         <span class="text-lg sm:text-xl block mb-1" id="type-1"></span>
                         <span class="text-2xl sm:text-3xl" id="type-2"></span>
                     </h1>
-                    <p class="text-white text-lg font-bold drop-shadow-lg"><span id="type-3"></span><br><span class="text-yellow-300 text-[16px] sm:text-xl md:text-2xl drop-shadow-md whitespace-nowrap inline-block tracking-tighter sm:tracking-normal" id="type-4"></span></p>
+                    <p class="text-white text-lg font-bold drop-shadow-lg"><span id="type-3"></span><br><span class="text-yellow-300 text-2xl sm:text-3xl text-stroke-black drop-shadow-md whitespace-nowrap inline-block tracking-tighter sm:tracking-normal" id="type-4"></span></p>
                 </div>
             </div>
         </header>
@@ -496,7 +500,8 @@
             // ひらがな入力と変換後の漢字の対応データ
             const typeScript = [
                 { target: "type-1", steps: [
-                    { h: "かんじを", k: "幹事を" },
+                    { h: "かんじ", k: "幹事", cls: "text-yellow-300 text-stroke-black drop-shadow-md" },
+                    { h: "を", k: "を" },
                     { h: "されてる", k: "されてる" },
                     { h: "あなた", k: "あなた" },
                     { h: ".", k: "." },
@@ -506,7 +511,8 @@
                 ], delayAfter: 2000 },
                 { target: "type-2", steps: [
                     { h: "ことしの", k: "今年の" },
-                    { h: "ぼうねんかい、", k: "忘年会、" },
+                    { h: "ぼうねんかい", k: "忘年会", cls: "text-yellow-300 text-stroke-black drop-shadow-md" },
+                    { h: "、", k: "、" },
                     { br: true },
                     { h: "もう", k: "もう" },
                     { h: "きまって", k: "決まって" },
@@ -574,6 +580,10 @@
                     // 変換前の下線付きテキスト要素
                     const unconvSpan = document.createElement('span');
                     unconvSpan.className = 'unconverted';
+                    if (step.cls) {
+                        const classes = step.cls.split(' ');
+                        unconvSpan.classList.add(...classes);
+                    }
                     el.insertBefore(unconvSpan, currentCursor);
 
                     // ひらがなを1文字ずつタイピング
