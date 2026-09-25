@@ -36,6 +36,31 @@
         .screen-hidden {
             display: none !important;
         }
+        .initial-hide {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.1em;
+            background-color: currentColor;
+            vertical-align: text-bottom;
+            margin-left: 2px;
+            animation: blink 1s step-end infinite;
+        }
+        .typing-cursor.typing {
+            animation: none;
+            opacity: 1;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .unconverted {
+            border-bottom: 2px solid currentColor;
+            padding-bottom: 1px;
+        }
     </style>
 </head>
 <body class="bg-pattern min-h-screen">
@@ -48,23 +73,23 @@
         <header class="w-full relative">
             <img src="gaikan.webp" alt="宴会イメージ" class="w-full h-72 md:h-80 object-cover">
             <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center p-4">
-                <div class="text-center space-y-6">
-                    <h1 class="text-white text-2xl sm:text-3xl font-black drop-shadow-lg leading-tight">今年の忘年会、<br>まだ決まっていませんか？</h1>
-                    <p class="text-white text-lg font-bold drop-shadow-lg">実は...<br><span class="text-yellow-300 text-xl sm:text-2xl md:text-3xl drop-shadow-md whitespace-nowrap">2階に宴会スペースございます！</span></p>
+                <div id="typewriter-area" class="text-center space-y-6">
+                    <h1 class="text-white font-black drop-shadow-lg leading-tight">
+                        <span class="text-lg sm:text-xl block mb-1" id="type-1"></span>
+                        <span class="text-2xl sm:text-3xl" id="type-2"></span>
+                    </h1>
+                    <p class="text-white text-lg font-bold drop-shadow-lg"><span id="type-3"></span><br><span class="text-yellow-300 text-[16px] sm:text-xl md:text-2xl drop-shadow-md whitespace-nowrap inline-block tracking-tighter sm:tracking-normal" id="type-4"></span></p>
                 </div>
             </div>
         </header>
 
-        <div class="p-5 bg-red-600 text-white text-center relative">
+        <div id="intro-box" class="p-5 bg-red-600 text-white text-center relative initial-hide">
             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-b-[20px] border-b-red-600"></div>
-            <p class="text-sm leading-relaxed font-bold">
-                ふらっとサク飲みに来るだけじゃもったいない！<br>
-                予算や好みに合わせて、あなた達のグループに<br>ぴったりの宴会コースをサクッと診断♪
-            </p>
+            <p id="type-5" class="text-sm leading-relaxed font-bold min-h-[4.5rem]"></p>
         </div>
 
         <!-- 知られざる強みアピールエリア -->
-        <section class="mt-6 px-4">
+        <section id="appeal-area" class="mt-6 px-4 initial-hide">
             <h2 class="text-center text-xl font-black text-gray-800 mb-5 border-b-2 border-red-600 inline-block pb-1">宴会はふくろうにお任せ！</h2>
             
             <div class="space-y-4">
@@ -98,7 +123,7 @@
         </section>
 
         <!-- スタートボタン (下部固定) -->
-        <div class="fixed bottom-0 left-0 w-full p-4 bg-white/90 backdrop-blur border-t border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-50 flex justify-center">
+        <div id="start-btn-area" class="fixed bottom-0 left-0 w-full p-4 bg-white/90 backdrop-blur border-t border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-50 flex justify-center initial-hide">
             <div class="w-full max-w-md">
                 <button onclick="startQuiz()" class="block w-full bg-red-600 hover:bg-red-700 text-white font-black text-center py-4 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-lg">
                     診断をはじめる
@@ -461,6 +486,156 @@
             });
             document.getElementById(resultId).classList.remove('hidden');
         }
+
+        // --- タイピングアニメーション機能 ---
+        async function initTypewriter() {
+            // ローマ字入力と変換後の漢字の対応データ
+            const typeScript = [
+                { target: "type-1", steps: [
+                    { r: "kanjiwo", k: "幹事を" },
+                    { r: "sareteru", k: "されてる" },
+                    { r: "anata", k: "あなた" },
+                    { r: ".", k: "." },
+                    { r: ".", k: "." },
+                    { r: ".", k: "." },
+                    { r: "!", k: "！" }
+                ], delayAfter: 2000 },
+                { target: "type-2", steps: [
+                    { r: "kotosino", k: "今年の" },
+                    { r: "bounenkai,", k: "忘年会、" },
+                    { br: true },
+                    { r: "mou", k: "もう" },
+                    { r: "kimatte", k: "決まって" },
+                    { r: "imasuka?", k: "いますか？" }
+                ], delayAfter: 1500 },
+                { target: "type-3", steps: [
+                    { r: "igaito", k: "意外と" },
+                    { r: "siraretenai", k: "知られてない" },
+                    { r: "nodesuga", k: "のですが" },
+                    { r: ".", k: "." },
+                    { r: ".", k: "." },
+                    { r: ".", k: "." }
+                ], delayAfter: 2000 },
+                { target: "type-4", steps: [
+                    { r: "enkai", k: "宴会" },
+                    { r: "ko-su,", k: "コース、" },
+                    { r: "goyouisite", k: "ご用意して" },
+                    { r: "orimasu!!", k: "おります！！" }
+                ], delayAfter: 500 },
+                { target: "type-5", steps: [
+                    { r: "furatto", k: "ふらっと" },
+                    { r: "sakunomini", k: "サク飲みに" },
+                    { r: "kurudakeja", k: "来るだけじゃ" },
+                    { r: "mottainai!", k: "もったいない！" },
+                    { br: true },
+                    { r: "yosanya", k: "予算や" },
+                    { r: "konomini", k: "好みに" },
+                    { r: "awasete,", k: "合わせて、" },
+                    { r: "anatatatino", k: "あなた達の" },
+                    { r: "guru-puni", k: "グループに" },
+                    { br: true },
+                    { r: "pittarino", k: "ぴったりの" },
+                    { r: "enkai", k: "宴会" },
+                    { r: "ko-suwo", k: "コースを" },
+                    { r: "sakutto", k: "サクッと" },
+                    { r: "sindan", k: "診断" },
+                    { r: "♪", k: "♪" }
+                ], delayAfter: 500 }
+            ];
+
+            const introBox = document.getElementById('intro-box');
+            const appeal = document.getElementById('appeal-area');
+            const btn = document.getElementById('start-btn-area');
+
+            let currentCursor = null;
+
+            function removeCursor() {
+                if (currentCursor) {
+                    currentCursor.remove();
+                    currentCursor = null;
+                }
+            }
+
+            function appendCursor(element) {
+                removeCursor();
+                currentCursor = document.createElement('span');
+                currentCursor.className = 'typing-cursor';
+                element.appendChild(currentCursor);
+            }
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // スクリプトに従って順次入力・変換アニメーションを実行
+            for (const line of typeScript) {
+                if (line.target === 'type-5') {
+                    introBox.classList.remove('initial-hide');
+                    introBox.classList.add('fade-in');
+                    await sleep(500); // 枠が出るのを待つ
+                }
+
+                const el = document.getElementById(line.target);
+                if (!el) continue;
+                appendCursor(el);
+                
+                // アニメーション速度の調整 (赤い説明文 type-5 だけ高速化)
+                const isFast = (line.target === 'type-5');
+                const typeBaseSpeed = isFast ? 15 : 40;     // 打鍵速度ベース
+                const typeRandomSpeed = isFast ? 15 : 40;   // 打鍵速度のランダム幅
+                const waitBeforeConvert = isFast ? 60 : 200;// 変換前のタメ
+                const waitAfterConvert = isFast ? 40 : 100; // 確定後のタメ
+
+                for (const step of line.steps) {
+                    if (step.br) {
+                        const br = document.createElement('br');
+                        el.insertBefore(br, currentCursor);
+                        continue;
+                    }
+
+                    // 変換前の下線付きテキスト要素
+                    const unconvSpan = document.createElement('span');
+                    unconvSpan.className = 'unconverted';
+                    el.insertBefore(unconvSpan, currentCursor);
+
+                    // ローマ字を1文字ずつタイピング
+                    for (let i = 0; i < step.r.length; i++) {
+                        currentCursor.classList.add('typing');
+                        unconvSpan.textContent += step.r[i];
+                        await sleep(typeBaseSpeed + Math.random() * typeRandomSpeed); 
+                        currentCursor.classList.remove('typing');
+                    }
+
+                    // 変換キー（スペースキー）を押す前の一瞬のタメ
+                    await sleep(waitBeforeConvert);
+
+                    // 漢字に変換（下線が消え、文字が置き換わる）
+                    unconvSpan.classList.remove('unconverted');
+                    unconvSpan.textContent = step.k;
+                    
+                    // 確定（エンターキー）後のタメ
+                    await sleep(waitAfterConvert);
+                }
+
+                // 指定された文章の終わりのタメ（2秒や1.5秒など）
+                await sleep(line.delayAfter);
+                removeCursor();
+            }
+
+            // 全て完了したら残りの要素を表示
+            if (appeal) {
+                appeal.classList.remove('initial-hide');
+                appeal.classList.add('fade-in');
+            }
+            await sleep(400);
+            if (btn) {
+                btn.classList.remove('initial-hide');
+                btn.classList.add('fade-in');
+            }
+        }
+
+        // ページ読み込み完了時にタイピングアニメーションを1度だけ開始
+        window.addEventListener('DOMContentLoaded', initTypewriter);
     </script>
 </body>
 </html>
