@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ふくろう 藤が丘店｜忘年会コース診断</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background-color: #fdf8f5; /* 温かみのあるオフホワイト */
+            color: #333;
+        }
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .bounce {
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+        .hidden-step {
+            display: none;
+        }
+        .bg-pattern {
+            background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .screen-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="bg-pattern min-h-screen">
+
+    <!-- ==========================================
+         画面1：スタート画面（見出しと2大名物）
+    ========================================== -->
+    <div id="screen-start" class="w-full max-w-md mx-auto bg-white min-h-screen shadow-lg pb-32 fade-in">
+        <!-- メインビジュアル -->
+        <header class="w-full relative">
+            <img src="gaikan.webp" alt="宴会イメージ" class="w-full h-72 md:h-80 object-cover">
+            <div class="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center p-4">
+                <div class="text-center space-y-6">
+                    <h1 class="text-white text-2xl sm:text-3xl font-black drop-shadow-lg leading-tight">今年の忘年会、<br>まだ決まっていませんか？</h1>
+                    <p class="text-white text-lg font-bold drop-shadow-lg">実は...<br><span class="text-yellow-300 text-xl sm:text-2xl md:text-3xl drop-shadow-md whitespace-nowrap">2階に宴会スペースございます！</span></p>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-5 bg-red-600 text-white text-center relative">
+            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-b-[20px] border-b-red-600"></div>
+            <p class="text-sm leading-relaxed font-bold">
+                ふらっとサク飲みに来るだけじゃもったいない！<br>
+                予算や好みに合わせて、あなた達のグループに<br>ぴったりの宴会コースをサクッと診断♪
+            </p>
+        </div>
+
+        <!-- 知られざる強みアピールエリア -->
+        <section class="mt-6 px-4">
+            <h2 class="text-center text-xl font-black text-gray-800 mb-5 border-b-2 border-red-600 inline-block pb-1">宴会はふくろうにお任せ！</h2>
+            
+            <div class="space-y-4">
+                <!-- アピール1：2階席 -->
+                <div class="bg-gray-50 rounded-xl shadow-sm border-2 border-orange-200 p-4 flex gap-4 items-center">
+                    <img src="2F.webp" alt="2階席" class="w-20 h-20 rounded-lg object-cover shadow-sm">
+                    <div>
+                        <h3 class="font-bold text-red-600 mb-1">広々！2階宴会スペース</h3>
+                        <p class="text-xs text-gray-700 leading-tight">1階はサク飲み、2階に上がるとみんなでワイワイ囲める宴会空間が！大人数での貸切や集まりにばっちり対応。</p>
+                    </div>
+                </div>
+
+                <!-- アピール2：大人のドリンクバー -->
+                <div class="bg-gray-50 rounded-xl shadow-sm border-2 border-blue-200 p-4 flex gap-4 items-center">
+                    <img src="drink.webp" alt="ドリンクバー" class="w-20 h-20 rounded-lg object-cover shadow-sm">
+                    <div class="overflow-hidden">
+                        <h3 class="font-bold text-blue-600 mb-1 text-[11px] sm:text-sm whitespace-nowrap tracking-tighter">待ち時間ゼロ！大人のドリンクバー 120分付き！</h3>
+                        <p class="text-xs text-gray-700 leading-tight">「ドリンクが来ない…」ストレスなし！自分で好きな濃さで作れるセルフ飲み放題がエンタメ感覚で大盛り上がり！</p>
+                    </div>
+                </div>
+
+                <!-- アピール3：コース価格 -->
+                <div class="bg-gray-50 rounded-xl shadow-sm border-2 border-green-200 p-4 flex gap-4 items-center">
+                    <img src="course1.webp" alt="コース料理" class="w-20 h-20 rounded-lg object-cover shadow-sm">
+                    <div class="overflow-hidden">
+                        <h3 class="font-bold text-green-600 mb-1 text-[12px] sm:text-sm whitespace-nowrap tracking-tighter">圧倒的コスパ！コース各種4,000円〜</h3>
+                        <p class="text-xs text-gray-700 leading-tight">全コースに大人のドリンクバー120分付き！名物料理がズラリと並ぶボリューム満点の内容で、幹事さんも安心の宴会をお約束します。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- スタートボタン (下部固定) -->
+        <div class="fixed bottom-0 left-0 w-full p-4 bg-white/90 backdrop-blur border-t border-gray-200 shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-50 flex justify-center">
+            <div class="w-full max-w-md">
+                <button onclick="startQuiz()" class="block w-full bg-red-600 hover:bg-red-700 text-white font-black text-center py-4 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-lg">
+                    診断をはじめる
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         画面2：診断（質問）画面
+    ========================================== -->
+    <div id="screen-quiz" class="screen-hidden w-full max-w-md mx-auto pt-8 px-4 min-h-screen pb-20">
+        <div class="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 relative">
+            <!-- 戻るボタン (スタート画面へ) -->
+            <button onclick="showScreen('screen-start')" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600 flex items-center text-sm font-bold">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                戻る
+            </button>
+
+            <h2 class="text-center text-xl font-black text-gray-800 mb-8 mt-6">🔍 ぴったりコース診断</h2>
+
+            <!-- Q1 -->
+            <div id="q1" class="step fade-in">
+                <div class="bg-gray-100 p-4 rounded-xl mb-6 relative">
+                    <span class="absolute -top-3 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">質問 1/3</span>
+                    <p class="text-center font-bold text-lg mt-2">今回の忘年会の人数や雰囲気は？</p>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="answerQ1('large')" class="w-full bg-white border-2 border-red-500 text-red-600 hover:bg-red-50 focus:bg-red-50 focus:ring-4 focus:ring-red-100 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>A. 部署やサークルなど、<br>大勢でワイワイ盛り上がりたい！</span>
+                        <svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <button onclick="answerQ1('small')" class="w-full bg-white border-2 border-red-500 text-red-600 hover:bg-red-50 focus:bg-red-50 focus:ring-4 focus:ring-red-100 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>B. 少人数〜中規模で、<br>美味しいものをしっかり食べたい！</span>
+                        <svg class="w-6 h-6 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+
+                <!-- おまかせガチャボタン追加 -->
+                <div class="mt-8 pt-6 border-t-2 border-dashed border-gray-200 text-center">
+                    <p class="text-xs text-gray-500 mb-2 font-bold">＼ 考えるの疲れちゃった幹事さんへ ／</p>
+                    <button onclick="rollGacha()" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-black py-4 px-4 rounded-xl shadow-md transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                        <span class="text-2xl">🎲</span> もう考えるの疲れた！ガチャに任せる
+                    </button>
+                </div>
+            </div>
+
+            <!-- Q2 (新規: 共通) -->
+            <div id="q2" class="step hidden-step mt-8 border-t-2 border-dashed border-gray-200 pt-8">
+                <div class="bg-gray-100 p-4 rounded-xl mb-6 relative">
+                    <span class="absolute -top-3 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">質問 2/3</span>
+                    <p class="text-center font-bold text-lg mt-2">今回のメンバー、「お酒」と「ご飯」<br>どちらにより気合いが入ってる？</p>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="answerQ2()" class="w-full bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>A. どちらかというとお酒！<br>大人のドリンクバーで楽しく飲みたい！</span>
+                        <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <button onclick="answerQ2()" class="w-full bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>B. ご飯も超大事！<br>ふくろうの美味しい料理を堪能したい！</span>
+                        <svg class="w-6 h-6 text-green-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Q3-A (旧Q2: 大人数派) -->
+            <div id="q3a" class="step hidden-step mt-8 border-t-2 border-dashed border-gray-200 pt-8">
+                <div class="bg-gray-100 p-4 rounded-xl mb-6 relative">
+                    <span class="absolute -top-3 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">質問 3/3</span>
+                    <p class="text-center font-bold text-lg mt-2">開催日程・予算の希望は？</p>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="processResult('result1')" class="w-full bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>A. 【日〜水曜日の平日】<br>お得に賢く開催したい！</span>
+                        <svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <button onclick="processResult('result2')" class="w-full bg-white border-2 border-blue-500 text-blue-600 hover:bg-blue-50 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>B. 【金・土・祝前日】<br>王道のにぎやか宴会にしたい！</span>
+                        <svg class="w-6 h-6 text-blue-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Q3-B (旧Q3: こだわり派) -->
+            <div id="q3b" class="step hidden-step mt-8 border-t-2 border-dashed border-gray-200 pt-8">
+                <div class="bg-gray-100 p-4 rounded-xl mb-6 relative">
+                    <span class="absolute -top-3 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full">質問 3/3</span>
+                    <p class="text-center font-bold text-lg mt-2">冬の宴会で一番重視したいのは？</p>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="processResult('result3')" class="w-full bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-50 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>A. 冬といえばやっぱりコレ！<br>あつあつの「もつ鍋」を囲みたい！</span>
+                        <svg class="w-6 h-6 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                    <button onclick="processResult('result4')" class="w-full bg-white border-2 border-orange-500 text-orange-600 hover:bg-orange-50 font-bold py-4 px-4 rounded-xl shadow-sm transition duration-200 text-left flex items-center justify-between">
+                        <span>B. 刺身もお肉も名物も！<br>お店の「旨いもん」を食べ尽くしたい！</span>
+                        <svg class="w-6 h-6 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         画面2.5：ローディング画面
+    ========================================== -->
+    <div id="screen-loading" class="screen-hidden w-full max-w-md mx-auto pt-8 px-4 min-h-screen flex items-center justify-center relative">
+        <div class="absolute inset-0 bg-black/60 z-0"></div> <!-- 暗くするフィルター -->
+        <div class="text-center pb-20 relative z-10 bg-white p-8 rounded-2xl shadow-2xl">
+            <img src="hukuro.webp" alt="ふくろう" class="w-24 h-24 mx-auto mb-6 bounce object-contain">
+            <h2 id="loading-title" class="text-xl font-black text-gray-800 mb-3">あなたにピッタリの宴会を準備中...</h2>
+            <p id="loading-subtitle" class="text-sm text-gray-500 font-bold">幹事さん、いつもお疲れ様です！</p>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         画面3：診断結果画面
+    ========================================== -->
+    <div id="screen-result" class="screen-hidden w-full max-w-md mx-auto pt-6 px-4 min-h-screen pb-40">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden border-t-8 border-red-600">
+            <div class="p-6 text-center bg-red-50 relative">
+                <button onclick="startQuiz()" class="absolute top-4 left-4 text-gray-400 hover:text-gray-600 flex items-center text-xs font-bold underline">
+                    再診断
+                </button>
+                
+                <!-- 幹事の称号 -->
+                <div id="kanji-title-area" class="mt-5 mb-4 relative z-10">
+                    <span class="text-xs font-bold text-gray-500">あなたの幹事タイプは…</span>
+                    <p id="kanji-title" class="text-md sm:text-lg font-black text-red-600 mt-1"></p>
+                </div>
+
+                <p class="font-bold text-gray-700 mb-2 text-sm relative z-10">おすすめのコースはこちら！</p>
+                <h2 id="result-title" class="text-xl md:text-2xl font-black text-gray-800 leading-tight">コース名</h2>
+            </div>
+            
+            <div class="p-6">
+                <!-- 結果コンテンツ (JSで表示切替) -->
+                <div id="result1" class="result-content hidden">
+                    <img src="course1.webp" alt="旨いもん満喫コース" class="w-full rounded-lg mb-4 object-cover">
+                    <p class="text-2xl text-center font-bold text-red-600 mb-2">4,000円<span class="text-sm font-normal text-gray-500">(税込)</span></p>
+                    <p class="text-sm font-bold bg-yellow-100 text-yellow-800 p-2 rounded text-center mb-4 shadow-sm">★ 120分セルフ飲み放題付き！</p>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="font-bold text-gray-800 mb-2 border-b pb-1">💡 幹事さんへのおすすめポイント</p>
+                        <p class="text-sm text-gray-600 leading-relaxed">2階席を広々使って、平日（日～水）限定価格でお得に宴会！セルフ飲み放題だから、大人数でも「お酒が来ない」待ち時間なしで乾杯し放題です。</p>
+                    </div>
+                </div>
+
+                <div id="result2" class="result-content hidden">
+                    <img src="course1.webp" alt="にぎやかコース" class="w-full rounded-lg mb-4 object-cover">
+                    <p class="text-2xl text-center font-bold text-red-600 mb-2">4,000円<span class="text-sm font-normal text-gray-500">(税込)</span></p>
+                    <p class="text-sm font-bold bg-yellow-100 text-yellow-800 p-2 rounded text-center mb-4 shadow-sm">★ 大人のドリンクバー120分付き！</p>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="font-bold text-gray-800 mb-2 border-b pb-1">💡 幹事さんへのおすすめポイント</p>
+                        <p class="text-sm text-gray-600 leading-relaxed">定番名物が揃った、絶対にハズさない鉄板プラン！2階席の賑やかな雰囲気と「大人のドリンクバー」で、盛り上がり最高潮間違いなしの王道宴会です。</p>
+                    </div>
+                </div>
+
+                <div id="result3" class="result-content hidden">
+                    <img src="course2.webp" alt="和牛もつ鍋コース" class="w-full rounded-lg mb-4 object-cover">
+                    <p class="text-2xl text-center font-bold text-red-600 mb-2">4,500円<span class="text-sm font-normal text-gray-500">(税込)</span></p>
+                    <p class="text-sm font-bold bg-yellow-100 text-yellow-800 p-2 rounded text-center mb-4 shadow-sm">★ 120分セルフ飲み放題付き！</p>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="font-bold text-gray-800 mb-2 border-b pb-1">💡 幹事さんへのおすすめポイント</p>
+                        <p class="text-sm text-gray-600 leading-relaxed">プルプルの和牛もつ鍋をみんなで囲む冬のイチオシ！寒い季節の忘年会で会話も弾む、心も体も温まる大満足コースです。</p>
+                    </div>
+                </div>
+
+                <div id="result4" class="result-content hidden">
+                    <img src="course1.webp" alt="ふくろうの旨いもん満喫コース" class="w-full rounded-lg mb-4 object-cover">
+                    <p class="text-2xl text-center font-bold text-red-600 mb-2">4,500円<span class="text-sm font-normal text-gray-500">(税込)</span></p>
+                    <p class="text-sm font-bold bg-yellow-100 text-yellow-800 p-2 rounded text-center mb-4 shadow-sm">★ 120分セルフ飲み放題付き！</p>
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p class="font-bold text-gray-800 mb-2 border-b pb-1">💡 幹事さんへのおすすめポイント</p>
+                        <p class="text-sm text-gray-600 leading-relaxed">料理も酒も妥協したくないグループへ。お刺身やお肉など、ふくろうの美味いところを凝縮した贅沢プラン！グルメな方も大満足です。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 予約CTAボタン (結果画面の下部固定) -->
+        <div class="fixed bottom-0 left-0 w-full p-4 bg-white/90 backdrop-blur shadow-[0_-5px_15px_rgba(0,0,0,0.1)] z-50 flex justify-center">
+            <div class="w-full max-w-md flex flex-col gap-2">
+                <p class="text-xs text-center text-gray-700 font-bold mb-1">＼ 2階席や週末のご予約はお早めに！ ／</p>
+                <a id="reservation-link" href="#" target="_blank" rel="noopener noreferrer" class="w-full bg-red-600 hover:bg-red-700 text-white font-black text-center py-4 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    【ネット予約可】コース・空席を確認
+                </a>
+                <button onclick="showScreen('screen-start')" class="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold text-center py-3 rounded-xl shadow transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 text-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    最初の画面に戻る
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ロジック用スクリプト -->
+    <script>
+        const resultTitles = {
+            'result1': '平日の大人数宴会に！<br>【日～水限定】<br>旨いもん満喫コース',
+            'result2': 'ハズレなしの鉄板！<br>【宴会に人気】<br>ふくろうでにぎやかコース',
+            'result3': '寒い季節の定番！<br>ふくろう和牛もつ鍋コース',
+            'result4': '贅沢宴会！<br>ふくろうの旨いもん満喫コース'
+        };
+
+        const courseLinks = {
+            'result1': 'https://www.hotpepper.jp/strJ000748120/course_cnod11/', // 日～水旨いもん
+            'result2': 'https://www.hotpepper.jp/strJ000748120/course_cnod03/', // にぎやか
+            'result3': 'https://www.hotpepper.jp/strJ000748120/course_cnod15/', // もつ鍋（基本）
+            'result4': 'https://www.hotpepper.jp/strJ000748120/course_cnod02/'  // 旨いもん満喫
+        };
+
+        const kanjiTitles = {
+            'result1': 'コスパの魔術師！<br>やりくり上手な愛され幹事',
+            'result2': '絶対外さない！<br>みんなを笑顔にする王道幹事',
+            'result3': '心も体もポッカポカ！<br>みんなのオカン系幹事',
+            'result4': '宴会の絶対王政！<br>美食と豪遊のカリスマ幹事'
+        };
+
+        // 指定した画面を表示し、他を隠す
+        function showScreen(screenId) {
+            ['screen-start', 'screen-quiz', 'screen-loading', 'screen-result'].forEach(id => {
+                const el = document.getElementById(id);
+                if (id === screenId) {
+                    el.classList.remove('screen-hidden');
+                    // アニメーション再トリガー
+                    void el.offsetWidth;
+                    el.classList.add('fade-in');
+                } else {
+                    el.classList.add('screen-hidden');
+                    el.classList.remove('fade-in');
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        let currentRoute = ''; // Q1での選択を保持する変数
+
+        // 診断スタート
+        function startQuiz() {
+            showScreen('screen-quiz');
+            
+            // 状態リセット (Q1のみ表示、他は隠す)
+            const q1 = document.getElementById('q1');
+            const q2 = document.getElementById('q2');
+            const q3a = document.getElementById('q3a');
+            const q3b = document.getElementById('q3b');
+            
+            q1.classList.remove('hidden-step');
+            q1.classList.add('fade-in');
+            
+            q2.classList.add('hidden-step');
+            q2.classList.remove('fade-in');
+            
+            q3a.classList.add('hidden-step');
+            q3a.classList.remove('fade-in');
+            
+            q3b.classList.add('hidden-step');
+            q3b.classList.remove('fade-in');
+            
+            window.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
+        // 質問1から質問2へ
+        function answerQ1(route) {
+            currentRoute = route; // 大人数か少人数かを記憶
+            const nextElement = document.getElementById('q2');
+            
+            // Q1を選び直した場合に備えて、Q3を両方とも隠す
+            document.getElementById('q3a').classList.add('hidden-step');
+            document.getElementById('q3a').classList.remove('fade-in');
+            document.getElementById('q3b').classList.add('hidden-step');
+            document.getElementById('q3b').classList.remove('fade-in');
+            
+            nextElement.classList.remove('hidden-step');
+            void nextElement.offsetWidth; // アニメーション再トリガー
+            nextElement.classList.add('fade-in');
+
+            // 少し待ってからスムーズに下へスクロール
+            setTimeout(() => {
+                nextElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        // 質問2から質問3へ (Q1の選択に応じて分岐)
+        function answerQ2() {
+            // Q1で選んだルートに応じたQ3を表示
+            const nextId = currentRoute === 'large' ? 'q3a' : 'q3b';
+            const otherId = currentRoute === 'large' ? 'q3b' : 'q3a'; // 選ばれなかった方のID
+            
+            const nextElement = document.getElementById(nextId);
+            const otherElement = document.getElementById(otherId);
+
+            // 選び直した場合に備えて、もう一方の分岐(Q3)を隠す
+            otherElement.classList.add('hidden-step');
+            otherElement.classList.remove('fade-in');
+            
+            nextElement.classList.remove('hidden-step');
+            void nextElement.offsetWidth; // アニメーション再トリガー
+            nextElement.classList.add('fade-in');
+
+            setTimeout(() => {
+                nextElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
+        }
+
+        // ローディングを挟んで結果へ
+        function processResult(resultId) {
+            // 通常の診断用テキストに設定
+            document.getElementById('loading-title').innerText = 'あなたにピッタリの宴会を準備中...';
+            document.getElementById('loading-subtitle').innerText = '幹事さん、いつもお疲れ様です！';
+
+            showScreen('screen-loading');
+            
+            // 約3秒後に結果画面へ遷移
+            setTimeout(() => {
+                showResult(resultId);
+            }, 3000);
+        }
+
+        // おまかせガチャ機能
+        function rollGacha() {
+            const results = ['result1', 'result2', 'result3', 'result4'];
+            // ランダムに結果を1つ選ぶ
+            const randomResult = results[Math.floor(Math.random() * results.length)];
+            
+            // ガチャ用のテキストに変更
+            document.getElementById('loading-title').innerText = 'ふくろうにおまかせ！運命のコースを選定中...';
+            document.getElementById('loading-subtitle').innerText = '今年はもう、これにしちゃいましょう！🎲';
+
+            showScreen('screen-loading');
+            
+            // 3秒後に結果画面へ遷移
+            setTimeout(() => {
+                showResult(randomResult, true);
+            }, 3000);
+        }
+
+        // 結果画面の表示
+        function showResult(resultId, isGacha = false) {
+            showScreen('screen-result');
+
+            document.getElementById('result-title').innerHTML = resultTitles[resultId];
+            
+            // ガチャの場合は幹事の称号エリアを非表示にする
+            const kanjiTitleArea = document.getElementById('kanji-title-area');
+            if (isGacha) {
+                kanjiTitleArea.classList.add('hidden');
+            } else {
+                kanjiTitleArea.classList.remove('hidden');
+                document.getElementById('kanji-title').innerHTML = kanjiTitles[resultId];
+            }
+
+            // 診断結果に応じてリンクを切り替え
+            document.getElementById('reservation-link').href = courseLinks[resultId];
+
+            const contents = document.querySelectorAll('.result-content');
+            contents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            document.getElementById(resultId).classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
