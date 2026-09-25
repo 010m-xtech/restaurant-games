@@ -85,7 +85,11 @@
 
         <div id="intro-box" class="p-5 bg-red-600 text-white text-center relative initial-hide">
             <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-b-[20px] border-b-red-600"></div>
-            <p id="type-5" class="text-sm leading-relaxed font-bold min-h-[4.5rem]"></p>
+            <p class="text-sm leading-relaxed font-bold min-h-[4.5rem]">
+                ふらっとサク飲みに来るだけじゃもったいない！<br>
+                予算や好みに合わせて、あなた達のグループに<br>
+                ぴったりの宴会コースをサクッと診断♪
+            </p>
         </div>
 
         <!-- 知られざる強みアピールエリア -->
@@ -489,57 +493,38 @@
 
         // --- タイピングアニメーション機能 ---
         async function initTypewriter() {
-            // ローマ字入力と変換後の漢字の対応データ
+            // ひらがな入力と変換後の漢字の対応データ
             const typeScript = [
                 { target: "type-1", steps: [
-                    { r: "kanjiwo", k: "幹事を" },
-                    { r: "sareteru", k: "されてる" },
-                    { r: "anata", k: "あなた" },
-                    { r: ".", k: "." },
-                    { r: ".", k: "." },
-                    { r: ".", k: "." },
-                    { r: "!", k: "！" }
+                    { h: "かんじを", k: "幹事を" },
+                    { h: "されてる", k: "されてる" },
+                    { h: "あなた", k: "あなた" },
+                    { h: ".", k: "." },
+                    { h: ".", k: "." },
+                    { h: ".", k: "." },
+                    { h: "！", k: "！" }
                 ], delayAfter: 2000 },
                 { target: "type-2", steps: [
-                    { r: "kotosino", k: "今年の" },
-                    { r: "bounenkai,", k: "忘年会、" },
+                    { h: "ことしの", k: "今年の" },
+                    { h: "ぼうねんかい、", k: "忘年会、" },
                     { br: true },
-                    { r: "mou", k: "もう" },
-                    { r: "kimatte", k: "決まって" },
-                    { r: "imasuka?", k: "いますか？" }
+                    { h: "もう", k: "もう" },
+                    { h: "きまって", k: "決まって" },
+                    { h: "いますか？", k: "いますか？" }
                 ], delayAfter: 1500 },
                 { target: "type-3", steps: [
-                    { r: "igaito", k: "意外と" },
-                    { r: "siraretenai", k: "知られてない" },
-                    { r: "nodesuga", k: "のですが" },
-                    { r: ".", k: "." },
-                    { r: ".", k: "." },
-                    { r: ".", k: "." }
+                    { h: "いがいと", k: "意外と" },
+                    { h: "しられてない", k: "知られてない" },
+                    { h: "のですが", k: "のですが" },
+                    { h: ".", k: "." },
+                    { h: ".", k: "." },
+                    { h: ".", k: "." }
                 ], delayAfter: 2000 },
                 { target: "type-4", steps: [
-                    { r: "enkai", k: "宴会" },
-                    { r: "ko-su,", k: "コース、" },
-                    { r: "goyouisite", k: "ご用意して" },
-                    { r: "orimasu!!", k: "おります！！" }
-                ], delayAfter: 500 },
-                { target: "type-5", steps: [
-                    { r: "furatto", k: "ふらっと" },
-                    { r: "sakunomini", k: "サク飲みに" },
-                    { r: "kurudakeja", k: "来るだけじゃ" },
-                    { r: "mottainai!", k: "もったいない！" },
-                    { br: true },
-                    { r: "yosanya", k: "予算や" },
-                    { r: "konomini", k: "好みに" },
-                    { r: "awasete,", k: "合わせて、" },
-                    { r: "anatatatino", k: "あなた達の" },
-                    { r: "guru-puni", k: "グループに" },
-                    { br: true },
-                    { r: "pittarino", k: "ぴったりの" },
-                    { r: "enkai", k: "宴会" },
-                    { r: "ko-suwo", k: "コースを" },
-                    { r: "sakutto", k: "サクッと" },
-                    { r: "sindan", k: "診断" },
-                    { r: "♪", k: "♪" }
+                    { h: "えんかい", k: "宴会" },
+                    { h: "こーす、", k: "コース、" },
+                    { h: "ごよういして", k: "ご用意して" },
+                    { h: "おります！！", k: "おります！！" }
                 ], delayAfter: 500 }
             ];
 
@@ -569,22 +554,15 @@
 
             // スクリプトに従って順次入力・変換アニメーションを実行
             for (const line of typeScript) {
-                if (line.target === 'type-5') {
-                    introBox.classList.remove('initial-hide');
-                    introBox.classList.add('fade-in');
-                    await sleep(500); // 枠が出るのを待つ
-                }
-
                 const el = document.getElementById(line.target);
                 if (!el) continue;
                 appendCursor(el);
                 
-                // アニメーション速度の調整 (赤い説明文 type-5 だけ高速化)
-                const isFast = (line.target === 'type-5');
-                const typeBaseSpeed = isFast ? 15 : 40;     // 打鍵速度ベース
-                const typeRandomSpeed = isFast ? 15 : 40;   // 打鍵速度のランダム幅
-                const waitBeforeConvert = isFast ? 60 : 200;// 変換前のタメ
-                const waitAfterConvert = isFast ? 40 : 100; // 確定後のタメ
+                // アニメーション速度の設定
+                const typeBaseSpeed = 40;     // 打鍵速度ベース
+                const typeRandomSpeed = 40;   // 打鍵速度のランダム幅
+                const waitBeforeConvert = 200;// 変換前のタメ
+                const waitAfterConvert = 100; // 確定後のタメ
 
                 for (const step of line.steps) {
                     if (step.br) {
@@ -598,10 +576,10 @@
                     unconvSpan.className = 'unconverted';
                     el.insertBefore(unconvSpan, currentCursor);
 
-                    // ローマ字を1文字ずつタイピング
-                    for (let i = 0; i < step.r.length; i++) {
+                    // ひらがなを1文字ずつタイピング
+                    for (let i = 0; i < step.h.length; i++) {
                         currentCursor.classList.add('typing');
-                        unconvSpan.textContent += step.r[i];
+                        unconvSpan.textContent += step.h[i];
                         await sleep(typeBaseSpeed + Math.random() * typeRandomSpeed); 
                         currentCursor.classList.remove('typing');
                     }
@@ -622,7 +600,12 @@
                 removeCursor();
             }
 
-            // 全て完了したら残りの要素を表示
+            // 全て完了したら残りの要素を順番に表示
+            if (introBox) {
+                introBox.classList.remove('initial-hide');
+                introBox.classList.add('fade-in');
+            }
+            await sleep(400);
             if (appeal) {
                 appeal.classList.remove('initial-hide');
                 appeal.classList.add('fade-in');
