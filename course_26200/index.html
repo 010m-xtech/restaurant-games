@@ -459,7 +459,7 @@
             const randomResult = results[Math.floor(Math.random() * results.length)];
             
             // ガチャ用のテキストに変更
-            document.getElementById('loading-title').innerText = 'ふくろうにおまかせ！運命のコースを選定中...';
+            document.getElementById('loading-title').innerHTML = 'ふくろうにおまかせ！<br>運命のコースを選定中...';
             document.getElementById('loading-subtitle').innerText = '今年はもう、これにしちゃいましょう！🎲';
 
             showScreen('screen-loading');
