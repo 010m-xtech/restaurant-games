@@ -151,7 +151,8 @@
     }
 
     .game-card {
-      background: var(--card-bg);
+      position: relative;
+      background: var(--primary-color);
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border-color);
@@ -162,6 +163,10 @@
       color: inherit;
       display: flex;
       flex-direction: column;
+      min-height: 140px;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
 
     .game-card:active {
@@ -172,8 +177,26 @@
     .game-thumbnail {
       width: 100%;
       height: auto;
-      aspect-ratio: 572 / 1024; /* 572x1024の縦横比を正確に維持 */
+      aspect-ratio: 572 / 1024; /* 572x1024の縦横比を維持 */
       object-fit: cover;
+      display: block;
+    }
+
+    .game-title-text {
+      display: none; /* 通常時は非表示（画像で表示するため） */
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 12px;
+      z-index: 2;
+    }
+
+    /* 画像読み込みエラー時に文字タイトルのカードを表示 */
+    .game-thumbnail.img-error {
+      display: none;
+    }
+
+    .game-thumbnail.img-error + .game-title-text {
       display: block;
     }
   </style>
@@ -219,7 +242,6 @@
           </div>
         </div>
 
-        <!-- ★ 修正箇所: id="submit-btn" を追加しました -->
         <button type="submit" id="submit-btn" class="btn-submit">回答を選択してゲーム一覧へ</button>
       </form>
     </section>
@@ -229,23 +251,27 @@
       <div class="game-grid">
         
         <!-- ゲーム 1 -->
-        <a class="game-card" data-title="ルーレット" href="https://example.com/game1" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/game1.webp" alt="ルーレット">
+        <a class="game-card" data-title="ルーレット" href="https://010m-xtech.github.io/restaurant-games/ROULETTE_026200" target="_blank" rel="noopener noreferrer">
+          <img class="game-thumbnail" src="images/game1.webp" alt="ルーレット" onerror="this.onerror=null; this.classList.add('img-error');">
+          <span class="game-title-text">ルーレット</span>
         </a>
 
         <!-- ゲーム 2 -->
-        <a class="game-card" data-title="あみだくじ" href="https://example.com/game2" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/game2.webp" alt="あみだくじ">
+        <a class="game-card" data-title="あみだくじ" href="https://010m-xtech.github.io/restaurant-games/amidakuji_026200" target="_blank" rel="noopener noreferrer">
+          <img class="game-thumbnail" src="images/game2.webp" alt="あみだくじ" onerror="this.onerror=null; this.classList.add('img-error');">
+          <span class="game-title-text">あみだくじ</span>
         </a>
 
         <!-- ゲーム 3 -->
-        <a class="game-card" data-title="占い" href="https://example.com/game4" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/game4.webp" alt="占い">
+        <a class="game-card" data-title="占い" href="https://010m-xtech.github.io/restaurant-games/uranai_026200" target="_blank" rel="noopener noreferrer">
+          <img class="game-thumbnail" src="images/game4.webp" alt="占い" onerror="this.onerror=null; this.classList.add('img-error');">
+          <span class="game-title-text">占い</span>
         </a>
 
         <!-- ゲーム 4 -->
         <a class="game-card" data-title="コース" href="https://010m-xtech.github.io/restaurant-games/course_26200" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/fukuroucourse3.webp" alt="コース">
+          <img class="game-thumbnail" src="images/fukuroucourse3.webp" alt="コース" onerror="this.onerror=null; this.classList.add('img-error');">
+          <span class="game-title-text">コース</span>
         </a>
         
       </div>
@@ -308,7 +334,7 @@
       });
     });
 
-    // ゲームカードクリック時のイベントログ取得
+    // ゲームカードクリック時のイベントログ取得（スプレッドシートへ送信）
     document.querySelectorAll('.game-card').forEach(card => {
       card.addEventListener('click', function() {
         const gameTitle = this.getAttribute('data-title') || '';
@@ -323,13 +349,19 @@
           game_name: gameTitle
         };
 
-        // バックグラウンドで送信
-        fetch(GAS_WEBAPP_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
+        // バックグラウンドでスプレッドシートへ送信
+        if (navigator.sendBeacon) {
+          // 画面遷移時でも確実に送信する Beacon API を使用
+          const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+          navigator.sendBeacon(GAS_WEBAPP_URL, blob);
+        } else {
+          fetch(GAS_WEBAPP_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+        }
       });
     });
   </script>
