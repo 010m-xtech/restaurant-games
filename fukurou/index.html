@@ -281,7 +281,7 @@
   <script>
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx3BU2w5xttYW78MgIoTDtI_KWZquK5ItpAmUAXlE0qse0eBK71mMVRxzE5MY9NYGtLdg/exec";
 
-    // URLパラメータから店舗IDを取得（例: ?store=store_01 形式、なければ 'default'）
+    // URLパラメータから店舗IDを取得
     const urlParams = new URLSearchParams(window.location.search);
     const storeId = urlParams.get('store') || 'default';
 
@@ -302,7 +302,6 @@
         submitBtn.innerText = "送信中...";
       }
 
-      // フォームデータの収集
       const payload = {
         event: "survey_submit",
         deviceId: deviceId,
@@ -320,7 +319,6 @@
         body: JSON.stringify(payload)
       })
       .then(() => {
-        // アンケート画面を隠し、ゲーム画面を表示
         document.getElementById("survey-section").classList.add("hidden");
         document.getElementById("top-section").classList.remove("hidden");
       })
@@ -334,11 +332,14 @@
       });
     });
 
-    // ゲームカードクリック時のイベントログ取得（スプレッドシートへ送信）
+    // ★ゲームカードクリック時（子要素の画像が押されても確実に親のaタグからdata-titleを取得する）
     document.querySelectorAll('.game-card').forEach(card => {
-      card.addEventListener('click', function() {
-        const gameTitle = this.getAttribute('data-title') || '';
+      card.addEventListener('click', function(e) {
+        // クリックされた要素から親要素の .game-card を探す
+        const targetCard = e.currentTarget;
+        const gameTitle = targetCard.getAttribute('data-title') || '';
         
+        // 選択されたアンケート結果を再取得（またはLocalStorage等から取得）
         const payload = {
           event: "game_click",
           deviceId: deviceId,
@@ -349,7 +350,9 @@
           game_name: gameTitle
         };
 
-        // keepalive: true を指定して、ページ遷移/別タブ起動時でも確実に送信を完了させる
+        console.log("Sending game_click:", payload); // デバッグ用
+
+        // GASへ送信
         fetch(GAS_WEBAPP_URL, {
           method: "POST",
           mode: "no-cors",
