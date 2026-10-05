@@ -250,78 +250,79 @@
     // ★ここにGASのWeb App URLを設定してください
     const GAS_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx3BU2w5xttYW78MgIoTDtI_KWZquK5ItpAmUAXlE0qse0eBK71mMVRxzE5MY9NYGtLdg/exec";
 
-    // URLパラメータから店舗IDを取得（例: ?store=store_01 形式、なければ 'default'）
-    const urlParams = new URLSearchParams(window.location.search);
-    const storeId = urlParams.get('store') || 'default';
+  // URLパラメータから店舗IDを取得（例: ?store=store_01 形式、なければ 'default'）
+  const urlParams = new URLSearchParams(window.location.search);
+  const storeId = urlParams.get('store') || 'default';
 
-    // 端末IDの取得（LocalStorageに保持するか新規作成）
-    let deviceId = localStorage.getItem('deviceId');
-    if (!deviceId) {
-      deviceId = 'dev_' + Math.random().toString(36).substring(2, 11);
-      localStorage.setItem('deviceId', deviceId);
-    }
+  // 端末IDの取得（LocalStorageに保持するか新規作成）
+  let deviceId = localStorage.getItem('deviceId');
+  if (!deviceId) {
+    deviceId = 'dev_' + Math.random().toString(36).substring(2, 11);
+    localStorage.setItem('deviceId', deviceId);
+  }
 
-    // アンケートフォーム送信時
-    document.getElementById("survey-form").addEventListener("submit", function(e) {
-      e.preventDefault();
+  // アンケートフォーム送信時
+  document.getElementById("survey-form").addEventListener("submit", function(e) {
+    e.preventDefault();
 
-      const submitBtn = document.getElementById("submit-btn");
-      submitBtn.disabled = true;
-      submitBtn.innerText = "送信中...";
+    const submitBtn = document.getElementById("submit-btn");
+    submitBtn.disabled = true;
+    submitBtn.innerText = "送信中...";
 
+    // フォームデータの収集（修正箇所: age の ?.value）
+    const payload = {
+      event: "survey_submit",
+      deviceId: deviceId,
+      storeId: storeId,
+      gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+      age: document.querySelector('input[name="age"]:checked')?.value || '',
+      relationship: document.querySelector('input[name="relationship"]:checked')?.value || '',
+      game_name: ""
+    };
+
+    fetch(GAS_WEBAPP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(() => {
+      // アンケート画面を隠し、ゲーム画面を表示
+      document.getElementById("survey-section").classList.add("hidden");
+      document.getElementById("top-section").classList.remove("hidden");
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      alert("送信に失敗しました。もう一度お試しください。");
+      submitBtn.disabled = false;
+      submitBtn.innerText = "回答を選択してゲーム一覧へ";
+    });
+  });
+
+  // ゲームカードクリック時のイベントログ取得
+  document.querySelectorAll('.game-card').forEach(card => {
+    card.addEventListener('click', function() {
+      const gameTitle = this.getAttribute('data-title') || '';
+      
       const payload = {
-        event: "survey_submit",
+        event: "game_click",
         deviceId: deviceId,
         storeId: storeId,
         gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-        age: document.querySelector('input[name="age"]:checked'):value || '',
+        age: document.querySelector('input[name="age"]:checked')?.value || '',
         relationship: document.querySelector('input[name="relationship"]:checked')?.value || '',
-        game_name: ""
+        game_name: gameTitle
       };
 
+      // バックグラウンドで送信
       fetch(GAS_WEBAPP_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
-      })
-      .then(() => {
-        // アンケート画面を隠し、ゲーム画面を表示
-        document.getElementById("survey-section").classList.add("hidden");
-        document.getElementById("top-section").classList.remove("hidden");
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("送信に失敗しました。もう一度お試しください。");
-        submitBtn.disabled = false;
-        submitBtn.innerText = "回答を選択してゲーム一覧へ";
       });
     });
-
-    // ゲームカードクリック時のイベントログ取得（必要に応じて記録する場合）
-    document.querySelectorAll('.game-card').forEach(card => {
-      card.addEventListener('click', function() {
-        const gameTitle = this.getAttribute('data-title') || '';
-        
-        const payload = {
-          event: "game_click",
-          deviceId: deviceId,
-          storeId: storeId,
-          gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-          age: document.querySelector('input[name="age"]:checked')?.value || '',
-          relationship: document.querySelector('input[name="relationship"]:checked')?.value || '',
-          game_name: gameTitle
-        };
-
-        // バックグラウンドで送信
-        fetch(GAS_WEBAPP_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-      });
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
