@@ -151,8 +151,7 @@
     }
 
     .game-card {
-      position: relative;
-      background: var(--primary-color);
+      background: var(--card-bg);
       border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border-color);
@@ -163,10 +162,6 @@
       color: inherit;
       display: flex;
       flex-direction: column;
-      min-height: 140px;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
     }
 
     .game-card:active {
@@ -177,27 +172,10 @@
     .game-thumbnail {
       width: 100%;
       height: auto;
-      aspect-ratio: 572 / 1024; /* 572x1024の縦横比を維持 */
+      aspect-ratio: 572 / 1024; /* 572x1024の縦横比を正確に維持 */
       object-fit: cover;
       display: block;
-    }
-
-    .game-title-text {
-      display: none; /* 通常時は非表示（画像で表示するため） */
-      color: #ffffff;
-      font-weight: 700;
-      font-size: 1.1rem;
-      padding: 12px;
-      z-index: 2;
-    }
-
-    /* 画像読み込みエラー時に文字タイトルのカードを表示 */
-    .game-thumbnail.img-error {
-      display: none;
-    }
-
-    .game-thumbnail.img-error + .game-title-text {
-      display: block;
+      pointer-events: none; /* 画像クリックのバブリング問題を解消 */
     }
   </style>
 </head>
@@ -252,26 +230,22 @@
         
         <!-- ゲーム 1 -->
         <a class="game-card" data-title="ルーレット" href="https://010m-xtech.github.io/restaurant-games/ROULETTE_026200" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/game1.webp" alt="ルーレット" onerror="this.onerror=null; this.classList.add('img-error');">
-          <span class="game-title-text">ルーレット</span>
+          <img class="game-thumbnail" src="images/game1.webp" alt="ルーレット">
         </a>
 
         <!-- ゲーム 2 -->
         <a class="game-card" data-title="あみだくじ" href="https://010m-xtech.github.io/restaurant-games/amidakuji_026200" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/game2.webp" alt="あみだくじ" onerror="this.onerror=null; this.classList.add('img-error');">
-          <span class="game-title-text">あみだくじ</span>
+          <img class="game-thumbnail" src="images/game2.webp" alt="あみだくじ">
         </a>
 
         <!-- ゲーム 3 -->
         <a class="game-card" data-title="占い" href="https://010m-xtech.github.io/restaurant-games/uranai_026200" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/game4.webp" alt="占い" onerror="this.onerror=null; this.classList.add('img-error');">
-          <span class="game-title-text">占い</span>
+          <img class="game-thumbnail" src="images/game4.webp" alt="占い">
         </a>
 
         <!-- ゲーム 4 -->
         <a class="game-card" data-title="コース" href="https://010m-xtech.github.io/restaurant-games/course_26200" target="_blank" rel="noopener noreferrer">
-          <img class="game-thumbnail" src="images/fukuroucourse3.webp" alt="コース" onerror="this.onerror=null; this.classList.add('img-error');">
-          <span class="game-title-text">コース</span>
+          <img class="game-thumbnail" src="images/fukuroucourse3.webp" alt="コース">
         </a>
         
       </div>
@@ -285,7 +259,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const storeId = urlParams.get('store') || 'default';
 
-    // 端末IDの取得（LocalStorageに保持するか新規作成）
+    // 端末IDの取得（LocalStorageに保存）
     let deviceId = localStorage.getItem('deviceId');
     if (!deviceId) {
       deviceId = 'dev_' + Math.random().toString(36).substring(2, 11);
@@ -293,53 +267,51 @@
     }
 
     // アンケートフォーム送信時
-    document.getElementById("survey-form").addEventListener("submit", function(e) {
-      e.preventDefault();
+    const surveyForm = document.getElementById("survey-form");
+    if (surveyForm) {
+      surveyForm.addEventListener("submit", function(e) {
+        e.preventDefault();
 
-      const submitBtn = document.getElementById("submit-btn");
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.innerText = "送信中...";
-      }
-
-      const payload = {
-        event: "survey_submit",
-        deviceId: deviceId,
-        storeId: storeId,
-        gender: document.querySelector('input[name="gender"]:checked')?.value || '',
-        age: document.querySelector('input[name="age"]:checked')?.value || '',
-        relationship: document.querySelector('input[name="relationship"]:checked')?.value || '',
-        game_name: ""
-      };
-
-      fetch(GAS_WEBAPP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(() => {
-        document.getElementById("survey-section").classList.add("hidden");
-        document.getElementById("top-section").classList.remove("hidden");
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("送信に失敗しました。もう一度お試しください。");
+        const submitBtn = document.getElementById("submit-btn");
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerText = "回答を選択してゲーム一覧へ";
+          submitBtn.disabled = true;
+          submitBtn.innerText = "送信中...";
         }
-      });
-    });
 
-    // ★ゲームカードクリック時（子要素の画像が押されても確実に親のaタグからdata-titleを取得する）
+        const payload = {
+          event: "survey_submit",
+          deviceId: deviceId,
+          storeId: storeId,
+          gender: document.querySelector('input[name="gender"]:checked')?.value || '',
+          age: document.querySelector('input[name="age"]:checked')?.value || '',
+          relationship: document.querySelector('input[name="relationship"]:checked')?.value || '',
+          game_name: ""
+        };
+
+        // GASへ送信
+        fetch(GAS_WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: JSON.stringify(payload)
+        })
+        .then(() => {
+          document.getElementById("survey-section").classList.add("hidden");
+          document.getElementById("top-section").classList.remove("hidden");
+        })
+        .catch(error => {
+          console.error("Error:", error);
+          // エラー時でも画面遷移を優先
+          document.getElementById("survey-section").classList.add("hidden");
+          document.getElementById("top-section").classList.remove("hidden");
+        });
+      });
+    }
+
+    // ゲームカードクリック時（確実にgame_clickイベントを送信）
     document.querySelectorAll('.game-card').forEach(card => {
-      card.addEventListener('click', function(e) {
-        // クリックされた要素から親要素の .game-card を探す
-        const targetCard = e.currentTarget;
-        const gameTitle = targetCard.getAttribute('data-title') || '';
+      card.addEventListener('click', function() {
+        const gameTitle = this.getAttribute('data-title') || '';
         
-        // 選択されたアンケート結果を再取得（またはLocalStorage等から取得）
         const payload = {
           event: "game_click",
           deviceId: deviceId,
@@ -350,16 +322,12 @@
           game_name: gameTitle
         };
 
-        console.log("Sending game_click:", payload); // デバッグ用
-
-        // GASへ送信
+        // 確実にスプレッドシートへ送信
         fetch(GAS_WEBAPP_URL, {
           method: "POST",
           mode: "no-cors",
-          keepalive: true,
-          headers: { "Content-Type": "text/plain" },
           body: JSON.stringify(payload)
-        }).catch(err => console.error("Game click log error:", err));
+        });
       });
     });
   </script>
