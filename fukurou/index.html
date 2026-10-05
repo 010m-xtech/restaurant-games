@@ -349,19 +349,14 @@
           game_name: gameTitle
         };
 
-        // バックグラウンドでスプレッドシートへ送信
-        if (navigator.sendBeacon) {
-          // 画面遷移時でも確実に送信する Beacon API を使用
-          const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
-          navigator.sendBeacon(GAS_WEBAPP_URL, blob);
-        } else {
-          fetch(GAS_WEBAPP_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-        }
+        // keepalive: true を指定して、ページ遷移/別タブ起動時でも確実に送信を完了させる
+        fetch(GAS_WEBAPP_URL, {
+          method: "POST",
+          mode: "no-cors",
+          keepalive: true,
+          headers: { "Content-Type": "text/plain" },
+          body: JSON.stringify(payload)
+        }).catch(err => console.error("Game click log error:", err));
       });
     });
   </script>
