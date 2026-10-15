@@ -266,7 +266,28 @@
       localStorage.setItem('deviceId', deviceId);
     }
 
-    // アンケートフォーム送信時
+    // 1. 画面アクセス（ページ読み込み時）ログ送信
+    window.addEventListener("DOMContentLoaded", function() {
+      const payload = {
+        event: "survey_view", // アンケート画面アクセスイベント
+        deviceId: deviceId,
+        storeId: storeId,
+        gender: "",
+        age: "",
+        relationship: "",
+        game_name: ""
+      };
+
+      fetch(GAS_WEBAPP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify(payload)
+      }).catch(error => {
+        console.error("Access log error:", error);
+      });
+    });
+
+    // 2. アンケートフォーム送信時
     const surveyForm = document.getElementById("survey-form");
     if (surveyForm) {
       surveyForm.addEventListener("submit", function(e) {
@@ -307,7 +328,7 @@
       });
     }
 
-    // ゲームカードクリック時（確実にgame_clickイベントを送信）
+    // 3. ゲームカードクリック時（確実にgame_clickイベントを送信）
     document.querySelectorAll('.game-card').forEach(card => {
       card.addEventListener('click', function() {
         const gameTitle = this.getAttribute('data-title') || '';
