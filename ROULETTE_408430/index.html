@@ -35,7 +35,7 @@
 html, body { height: 100%; margin: 0; }
 body {
   background: var(--ink); color: var(--text); font-family: var(--f-body);
-  overflow: hidden; touch-action: none; -webkit-font-smoothing: antialiased;
+  overflow: hidden; touch-action: manipulation; -webkit-font-smoothing: antialiased;
 }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -275,6 +275,33 @@ button { cursor: pointer; }
   0% { opacity: 0; transform: scale(1.35); filter: blur(14px) brightness(2.4); }
   45% { opacity: 1; filter: blur(2px) brightness(1.6); }
   100% { opacity: 1; transform: scale(1); filter: none; }
+}
+
+/* 選択肢の名前: 長くても折り返して全文表示 */
+textarea.player-name-input {
+  resize: none; overflow: hidden; display: block; min-height: 40px; height: auto; padding: 9px 12px; line-height: 1.35;
+  white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; line-break: strict;
+}
+textarea.player-name-input { color: var(--text); font-family: var(--f-display); }
+textarea.player-name-input { font-size: 16px; letter-spacing: .02em; }
+
+/* iPhone: body の touch-action:none が一覧のスクロールを止めないようにする */
+#setup-view, .player-list, .player-list * { touch-action: pan-y; }
+.player-list { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+textarea.player-name-input { touch-action: manipulation; }
+#gl, #game-view { touch-action: none; }
+
+/* 選択肢の一覧は NEXT ボタンの上で終わらせる(重なり防止。溢れたときだけスクロール) */
+.setup-inner { padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+.player-list { padding-bottom: 6px; }
+/* 背の低い画面では見出しを詰めて、一覧の表示領域を確保 */
+@media (max-height: 760px) {
+  .setup-inner { padding-top: max(18px, env(safe-area-inset-top)); gap: 10px; }
+  .hero { padding: 4px 0 0; }
+  .hero .tagline { margin-top: 6px; font-size: 13px; line-height: 1.45; }
+  .hero .hint { margin-top: 4px; font-size: 11px; }
+  .hero .orn { margin-bottom: 0; }
+  .title { font-size: clamp(32px, 10vw, 42px); margin-bottom: 4px; }
 }
 
     </style>
@@ -611,15 +638,53 @@ button { cursor: pointer; }
                 el.className = 'player-row';
                 el.innerHTML = `
                     <span class="num">${index + 1}</span>
-                    <input type="text" value="${escapeHtml(p.name)}" class="player-name-input" placeholder="入力..." data-id="${p.id}"/>
+                    <textarea rows="1" class="player-name-input" placeholder="入力..." data-id="${p.id}" enterkeyhint="done" spellcheck="false">${escapeHtml(p.name)}</textarea>
                 `;
                 DOM.playerList.appendChild(el);
             });
 
+            // 長い名前は意味のまとまりで折り返す(助詞の後・文字種の切れ目を優先し、2行をなるべく均等に)
+            const _mc = document.createElement('canvas').getContext('2d');
+            const scriptOf = (c) => /[\u3040-\u309f]/.test(c) ? 'h' : /[\u30a0-\u30ff]/.test(c) ? 'k' : /[\u4e00-\u9fff々]/.test(c) ? 'c' : /[A-Za-z0-9]/.test(c) ? 'a' : 'o';
+            const NG_HEAD = /[ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮー、。,.)）」』!！?？]/;
+            function smartBreak(text, ta) {
+                const cs = getComputedStyle(ta);
+                _mc.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+                const ls = parseFloat(cs.letterSpacing) || 0;
+                const avail = ta.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
+                const w = (t) => _mc.measureText(t).width + ls * t.length;
+                if (avail <= 0 || w(text) <= avail) return text;
+                let best = -1, bestScore = Infinity;
+                for (let i = 2; i <= text.length - 2; i++) {
+                    const L = text.slice(0, i), R = text.slice(i);
+                    if (NG_HEAD.test(R[0]) || /^[\s　]$/.test(R[0]) && false) continue;
+                    const wl = w(L.replace(/[\s　]+$/, '')), wr = w(R.replace(/^[\s　]+/, ''));
+                    if (wl > avail || wr > avail) continue;
+                    const a = text[i - 1], b = text[i];
+                    let bonus = 0;
+                    if (/[\s　]/.test(a) || /[\s　]/.test(b)) bonus = 3;
+                    else if (/[のとをにでがはもへや・]/.test(a) && scriptOf(a) === 'h' && scriptOf(b) !== 'h') bonus = 2;
+                    else if (/[のとをにでがはもへや・]/.test(a)) bonus = 1.2;
+                    else if (scriptOf(a) !== scriptOf(b)) bonus = 1;
+                    const score = Math.abs(wl - wr) / avail - bonus * 0.35;
+                    if (score < bestScore) { bestScore = score; best = i; }
+                }
+                if (best < 0) return text;      // どこで切っても収まらない → ブラウザの折り返しに任せる
+                return (text.slice(0, best).replace(/[\s　]+$/, '') + '\n' + text.slice(best).replace(/^[\s　]+/, ''));
+            }
+            // 長い名前は折り返して全文を表示する(高さを内容に合わせる)
+            const autosize = (t) => { t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; };
             document.querySelectorAll('.player-name-input').forEach(input => {
+                const rebreak = () => { input.value = smartBreak(input.value.replace(/[\r\n]+/g, ''), input); autosize(input); };
+                rebreak();
+                requestAnimationFrame(rebreak);
+                if (document.fonts && document.fonts.ready) document.fonts.ready.then(rebreak);
+                input.addEventListener('input', () => { autosize(input); });
+                input.addEventListener('blur', rebreak);
+                input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
                 input.addEventListener('change', (e) => {
                     const player = state.players.find(p => p.id === parseInt(e.target.dataset.id));
-                    if (player) player.name = e.target.value;
+                    if (player) player.name = e.target.value.replace(/[\r\n]+/g, '');
                     calculateSlices();
                 });
             });
@@ -756,6 +821,14 @@ button { cursor: pointer; }
                     // 盤面表示用の短縮名を判定
                     let displayLabel = seq.player.name || `Player ${playerIndex}`;
                     // フード用
+                    if (displayLabel === '海老づくしのアヒージョ') displayLabel = 'アヒージョ';
+                    if (displayLabel === '炙りベーコンと半熟味玉のポテトサラダ') displayLabel = 'ポテトサラダ';
+                    if (displayLabel === '自家製タルタルのチキン南蛮') displayLabel = 'チキン南蛮';
+                    if (displayLabel === '砂肝鉄板焼き　葱まみれ') displayLabel = '砂肝鉄板焼き';
+                    if (displayLabel === '八戸産　炙りしめ鯖') displayLabel = '炙りしめ鯖';
+                    if (displayLabel === '熱々鉄板豚バラキムチ炒め') displayLabel = '豚キムチ';
+                    if (displayLabel === 'ごま油香る　和風焼きうどん') displayLabel = '焼うどん';
+                    if (displayLabel === 'タコと大葉のガーリックライス') displayLabel = 'ガーリックライス';
                     if (displayLabel === '島豆腐のゴーヤチャンプル') displayLabel = 'ゴーヤチャンプル';
                     if (displayLabel === 'シンプルだしまき玉子') displayLabel = 'だしまき玉子';
                     if (displayLabel === '長芋ガーリックフライ') displayLabel = 'ガーリックフライ';
