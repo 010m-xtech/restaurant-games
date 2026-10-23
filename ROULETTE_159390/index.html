@@ -35,7 +35,7 @@
 html, body { height: 100%; margin: 0; }
 body {
   background: var(--ink); color: var(--text); font-family: var(--f-body);
-  overflow: hidden; touch-action: none; -webkit-font-smoothing: antialiased;
+  overflow: hidden; touch-action: manipulation; -webkit-font-smoothing: antialiased;
 }
 button, input, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
@@ -284,6 +284,12 @@ textarea.player-name-input {
 }
 textarea.player-name-input { color: var(--text); font-family: var(--f-display); }
 textarea.player-name-input { font-size: 16px; letter-spacing: .02em; }
+
+/* iPhone: body の touch-action:none が一覧のスクロールを止めないようにする */
+#setup-view, .player-list, .player-list * { touch-action: pan-y; }
+.player-list { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+textarea.player-name-input { touch-action: manipulation; }
+#gl, #game-view { touch-action: none; }
 
     </style>
 </head>
