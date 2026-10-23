@@ -291,6 +291,17 @@ textarea.player-name-input { font-size: 16px; letter-spacing: .02em; }
 textarea.player-name-input { touch-action: manipulation; }
 #gl, #game-view { touch-action: none; }
 
+/* 選択肢の一覧は NEXT ボタンの上で終わらせる(重なり防止。溢れたときだけスクロール) */
+.setup-inner { padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+.player-list { padding-bottom: 6px; }
+/* 背の低い画面では見出しを詰めて、一覧の表示領域を確保 */
+@media (max-height: 760px) {
+  .setup-inner { padding-top: max(18px, env(safe-area-inset-top)); gap: 10px; }
+  .hero { padding: 4px 0 0; }
+  .hero .tagline, .hero .hint { display: none; }
+  .title { font-size: clamp(32px, 10vw, 42px); margin-bottom: 4px; }
+}
+
     </style>
 </head>
 <body>
