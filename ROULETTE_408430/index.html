@@ -605,7 +605,7 @@ textarea.player-name-input { touch-action: manipulation; }
         const FOOD_CANDIDATES = [
             '島豆腐のゴーヤチャンプル',
             'シンプルだしまき玉子',
-            '島唐辛子ぎょうざ',
+            '青唐辛子餃子',
             '紅芋コロッケ',
             '沖縄そば',
             '長芋ガーリックフライ',
@@ -621,6 +621,9 @@ textarea.player-name-input { touch-action: manipulation; }
             'url(#red-velvet)', 
             'url(#black-metal)'
         ];
+        // 最初から必ず表示するメニュー
+        const FOOD_PINNED = [];
+
 
         function escapeHtml(str) {
             return String(str ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -821,14 +824,10 @@ textarea.player-name-input { touch-action: manipulation; }
                     // 盤面表示用の短縮名を判定
                     let displayLabel = seq.player.name || `Player ${playerIndex}`;
                     // フード用
-                    if (displayLabel === '海老づくしのアヒージョ') displayLabel = 'アヒージョ';
-                    if (displayLabel === '炙りベーコンと半熟味玉のポテトサラダ') displayLabel = 'ポテトサラダ';
-                    if (displayLabel === '自家製タルタルのチキン南蛮') displayLabel = 'チキン南蛮';
-                    if (displayLabel === '砂肝鉄板焼き　葱まみれ') displayLabel = '砂肝鉄板焼き';
-                    if (displayLabel === '八戸産　炙りしめ鯖') displayLabel = '炙りしめ鯖';
-                    if (displayLabel === '熱々鉄板豚バラキムチ炒め') displayLabel = '豚キムチ';
-                    if (displayLabel === 'ごま油香る　和風焼きうどん') displayLabel = '焼うどん';
-                    if (displayLabel === 'タコと大葉のガーリックライス') displayLabel = 'ガーリックライス';
+                    if (displayLabel === '島豆腐のゴーヤチャンプル') displayLabel = 'ゴーヤチャンプル';
+                    if (displayLabel === 'シンプルだしまき玉子') displayLabel = 'だしまき玉子';
+                    if (displayLabel === '長芋ガーリックフライ') displayLabel = 'ガーリックフライ';
+                    if (displayLabel === '沖縄産太もずく') displayLabel = 'もずく';
                     if (displayLabel === '島豆腐のゴーヤチャンプル') displayLabel = 'ゴーヤチャンプル';
                     if (displayLabel === 'シンプルだしまき玉子') displayLabel = 'だしまき玉子';
                     if (displayLabel === '長芋ガーリックフライ') displayLabel = 'ガーリックフライ';
@@ -1200,7 +1199,7 @@ textarea.player-name-input { touch-action: manipulation; }
                 // 「フードを決める」が選ばれている場合、未表示の項目からランダムに補完する
                 if (state.theme === 'フードを決める') {
                     const currentNames = state.players.map(p => p.name);
-                    const availableFoods = FOOD_CANDIDATES.filter(f => !currentNames.includes(f));
+                    const availableFoods = FOOD_CANDIDATES.filter(f => !currentNames.includes(f));   // 未表示のメニューから補完
                     if (availableFoods.length > 0) {
                         newName = availableFoods[Math.floor(Math.random() * availableFoods.length)];
                     }
@@ -1250,12 +1249,11 @@ textarea.player-name-input { touch-action: manipulation; }
 
             // 「フードを決める」が選択された場合の強制設定
             if (value === 'フードを決める') {
-                const shuffled = [...FOOD_CANDIDATES];
-                for (let i = shuffled.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-                }
-                const selectedFoods = shuffled.slice(0, 6);
+                const shuf = (a) => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+                // ●付きのメニューは必ず含め、足りない分だけ残りからランダムに補う
+                const pinned = shuf(FOOD_CANDIDATES.filter(f => FOOD_PINNED.includes(f))).slice(0, 6);
+                const rest = shuf(FOOD_CANDIDATES.filter(f => !FOOD_PINNED.includes(f)));
+                const selectedFoods = shuf([...pinned, ...rest.slice(0, 6 - pinned.length)]);
                 state.players = selectedFoods.map((food, index) => ({ id: index + 1, name: food, penalties: 0 }));
             } else {
                 state.players = [
